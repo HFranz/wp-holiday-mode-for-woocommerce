@@ -15,7 +15,7 @@
  * Plugin Name:       Holiday Mode for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/holiday-mode-for-woocommerce/
  * Description:       Set your WooCommerce shop to holiday/vacation mode. Use date range to schedule closed time.
- * Version:           1.8.0
+ * Version:           1.8.1
  * Author:            Heinrich Franz
  * Author URI:        https://sevmatic/?source=wordpress
  * License:           GPL-2.0+
