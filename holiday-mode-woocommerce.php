@@ -61,13 +61,117 @@ function hmfw_declare_wc_compatibility() {
 	\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
 }
 
-add_action ('init', 'hmfw_woocommerce_holiday_mode');
+/**
+ * Add the "Holiday Mode" settings page as a new tab under WooCommerce > Settings.
+ */
+add_filter( 'woocommerce_get_settings_pages', 'hmfw_add_settings_page' );
+function hmfw_add_settings_page( $settings ) {
+	$settings[] = include plugin_dir_path( __FILE__ ) . 'includes/class-hmfw-settings.php';
+
+	return $settings;
+}
+
+/**
+ * Add a "Settings" link on the Plugins list page, pointing to the new settings tab.
+ */
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'hmfw_plugin_action_links' );
+function hmfw_plugin_action_links( $links ) {
+	if ( hmfw_isWooCommerceNotAvailable() ) {
+		return $links;
+	}
+
+	$settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=holiday_mode' ) ) . '">' . esc_html__( 'Settings', 'holiday-mode-woocommerce' ) . '</a>';
+	array_unshift( $links, $settings_link );
+
+	return $links;
+}
+
+/**
+ * One-time migration of settings that used to live in the Customizer (theme mods)
+ * into normal WordPress options, managed by the new WooCommerce settings page.
+ *
+ * This runs from three different triggers, from "most immediate" to "most reliable":
+ *
+ * 1. register_activation_hook() - runs instantly on (re-)activation. Does NOT
+ *    fire on a normal update though, because WordPress keeps the plugin active
+ *    the whole time (files are just swapped in place), so this alone is not
+ *    enough to cover the by far most common upgrade path.
+ * 2. 'upgrader_process_complete' - fires right after WordPress (or an
+ *    auto-update) finishes updating this plugin, so the migration typically
+ *    happens immediately, without waiting for the next page load.
+ * 3. 'init' (priority 5, fallback) - guarantees the migration eventually runs
+ *    even if neither hook above fired, e.g. after a manual file replacement
+ *    via FTP/SFTP/deployment script that bypasses the WordPress updater
+ *    entirely. The check itself is a single, cheap get_option() call, so
+ *    keeping it as a safety net has no meaningful performance impact once
+ *    migrated.
+ */
+register_activation_hook( __FILE__, 'hmfw_migrate_customizer_settings' );
+
+add_action( 'upgrader_process_complete', 'hmfw_migrate_after_plugin_update', 10, 2 );
+function hmfw_migrate_after_plugin_update( $upgrader_object, $options ) {
+	if ( 'update' !== ( $options['action'] ?? '' ) || 'plugin' !== ( $options['type'] ?? '' ) ) {
+		return;
+	}
+
+	if ( ! in_array( plugin_basename( __FILE__ ), $options['plugins'] ?? array(), true ) ) {
+		return;
+	}
+
+	hmfw_migrate_customizer_settings();
+}
+
+/**
+ * Version of this plugin at which the Customizer settings were migrated to
+ * options managed by the WooCommerce settings page. Used as the threshold
+ * for hmfw_migrate_customizer_settings() below.
+ */
+define( 'HMFW_CUSTOMIZER_MIGRATION_VERSION', '1.8.0' );
+
+add_action( 'init', 'hmfw_migrate_customizer_settings', 5 );
+function hmfw_migrate_customizer_settings() {
+	$installed_version = get_option( 'hmfw_version', '0' );
+
+	if ( version_compare( $installed_version, HMFW_CUSTOMIZER_MIGRATION_VERSION, '>=' ) ) {
+		return;
+	}
+
+	$map = array(
+		'hmfw_holiday-status'           => array( 'hmfw_holiday_status', 'bool_to_yesno' ),
+		'hmfw_holiday-startdate'        => array( 'hmfw_holiday_startdate', 'raw' ),
+		'hmfw_holiday-enddate'          => array( 'hmfw_holiday_enddate', 'raw' ),
+		'hmfw_holiday-useCustomMessage' => array( 'hmfw_holiday_use_custom_message', 'bool_to_yesno' ),
+		'hmfw_holiday-message'          => array( 'hmfw_holiday_message', 'raw' ),
+	);
+
+	foreach ( $map as $theme_mod => $mapping ) {
+		list( $option, $type ) = $mapping;
+		$value                 = get_theme_mod( $theme_mod, null );
+
+		if ( null === $value || '' === $value ) {
+			continue;
+		}
+
+		if ( 'bool_to_yesno' === $type ) {
+			$value = $value ? 'yes' : 'no';
+		}
+
+		update_option( $option, $value );
+		remove_theme_mod( $theme_mod );
+	}
+
+	update_option( 'hmfw_version', HMFW_VERSION );
+}
+
+// Runs after hmfw_migrate_customizer_settings() (priority 5) on the same 'init' hook,
+// so freshly migrated options are already available on the very first request.
+add_action ('init', 'hmfw_woocommerce_holiday_mode', 10);
 function hmfw_woocommerce_holiday_mode() {
-	if (hmfw_isWooCommerceNotAvailable() || false == get_theme_mod( 'hmfw_holiday-status', 0)) {
+	if (hmfw_isWooCommerceNotAvailable() || 'yes' !== get_option( 'hmfw_holiday_status', 'no' )) {
 		return;
 	}
 	
-	if (!hmfw_check_in_range(get_theme_mod( 'hmfw_holiday-startdate'), get_theme_mod( 'hmfw_holiday-enddate'))) {
+	if (!hmfw_check_in_range(get_option( 'hmfw_holiday_startdate' ), get_option( 'hmfw_holiday_enddate' ))) {
 		return;
 	}
 	
@@ -86,7 +190,7 @@ function hmfw_woocommerce_holiday_mode() {
  
 // Show Holiday Notice
 function hmfw_wc_shop_disabled() {
-	$notice = get_theme_mod( 'hmfw_holiday-useCustomMessage', 0 ) == true ? get_theme_mod( 'hmfw_holiday-message' ) : get_option( 'woocommerce_demo_store_notice' );
+	$notice = 'yes' === get_option( 'hmfw_holiday_use_custom_message', 'no' ) ? get_option( 'hmfw_holiday_message' ) : get_option( 'woocommerce_demo_store_notice' );
 	wc_print_notice( wp_kses_post( $notice ), 'error' );
 }
 
@@ -104,114 +208,23 @@ function hmfw_check_in_range( $start_date, $end_date ) {
 	return ( $start <= $today && $today <= $end );
 }
 
-add_action( 'customize_register', 'hmfw_starter_customize_register');
-function hmfw_starter_customize_register( $wp_customize ) 
-{
-	$wp_customize->add_section(
-		'ip-holiday-settings', array(
-			'title' => __( 'Holiday Mode Settings', 'holiday-mode-woocommerce' )
-		)
-	);
-	
-	if (hmfw_isWooCommerceNotAvailable()) {
-		$wp_customize->add_setting(  'no-WooCommerce', array(
-           'capability' => 'edit_theme_options',
-           'type'       => 'hidden',
-           'autoload'   => false
-         ) );
-		
-		$wp_customize->add_control( 'no-WooCommerce', array(
-			'label'   => __( 'WooCommerce required', 'holiday-mode-woocommerce' ),
-			'description' => __( 'Your WordPress installation seems not to have WooCommerce plugin.<br><br>Please install and activate WooCommerce.', 'holiday-mode-woocommerce' ),
-			'section' => 'ip-holiday-settings',
-			'type'    => 'hidden',
-         ) );
-		
+/**
+ * Show an admin notice when WooCommerce is not active, since the settings
+ * page is hooked into the WooCommerce admin menu and would otherwise be
+ * invisible without any explanation.
+ */
+add_action( 'admin_notices', 'hmfw_wc_missing_notice' );
+function hmfw_wc_missing_notice() {
+	if ( ! hmfw_isWooCommerceNotAvailable() || ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
-	
-	$wp_customize->add_setting( 'hmfw_holiday-status', array(
-	  'capability' => 'edit_theme_options',
-	  'default' => false,
-	  'sanitize_callback' => 'hmfw_sanitize_checkbox',
-	) );
 
-	$wp_customize->add_control( 'hmfw_holiday-status', array(
-	  'type' => 'checkbox',
-	  'section' => 'ip-holiday-settings',
-	  'label' => __( 'Activate', 'holiday-mode-woocommerce' ),
-	  'description' => __( 'Activate Holiday Mode', 'holiday-mode-woocommerce' ),
-	) );
-
-	$wp_customize->add_setting( 'hmfw_holiday-startdate', array(
-		  'capability' => 'edit_theme_options',
-		  'sanitize_callback' => 'sanitize_text_field',
-		) );
-	
-	$wp_customize->add_setting( 'hmfw_holiday-enddate', array(
-		'capability' => 'edit_theme_options',
-		'sanitize_callback' => 'sanitize_text_field',
-	) );
-
-	$wp_customize->add_control( 'hmfw_holiday-startdate', array(
-	  'type' => 'date',
-	  'section' => 'ip-holiday-settings', // Add a default or your own section
-	  'label' => __( 'Start of Holidays', 'holiday-mode-woocommerce' ),
-	  'description' => __( 'Enter first day of Holidays here:', 'holiday-mode-woocommerce' ),
-	  'input_attrs' => array(
-		'placeholder' => __( 'mm/dd/yyyy', 'holiday-mode-woocommerce' ),
-	  ),
-	) );
-	
-	$wp_customize->add_control( 'hmfw_holiday-enddate', array(
-	  'type' => 'date',
-	  'section' => 'ip-holiday-settings', // Add a default or your own section
-	  'label' => __( 'End of Holidays', 'holiday-mode-woocommerce' ),
-	  'description' => __( 'Enter last day of Holidays here:', 'holiday-mode-woocommerce' ),
-	  'input_attrs' => array(
-		'placeholder' => __( 'mm/dd/yyyy', 'holiday-mode-woocommerce' ),
-	  ),
-	) );
-	
-	$wp_customize->add_setting( 'hmfw_holiday-useCustomMessage', array(
-	  'capability' => 'edit_theme_options',
-	  'default' => false,
-	  'sanitize_callback' => 'hmfw_sanitize_checkbox',
-	) );
-
-	$wp_customize->add_control( 'hmfw_holiday-useCustomMessage', array(
-	  'type' => 'checkbox',
-	  'section' => 'ip-holiday-settings',
-	  'label' => __( 'Use own Holiday message', 'holiday-mode-woocommerce' ),
-	  'description' => __( 'If activated own message can be entered otherwise Store notice from WooCommerce as Holiday message will be used for customers.', 'holiday-mode-woocommerce' ),
-	) );
-	
-	$wp_customize->add_setting( 'hmfw_holiday-message', array(
-	  'capability' => 'edit_theme_options',
-	  'default' => __( 'I am on vacation.', 'holiday-mode-woocommerce' ),
-	  'sanitize_callback' => 'wp_kses_post',
-	) );
-
-	$wp_customize->add_control( 'hmfw_holiday-message', array(
-	  'type' => 'textarea',
-	  'section' => 'ip-holiday-settings', // // Add a default or your own section
-	  'label' => __( 'Vacation message', 'holiday-mode-woocommerce' ),
-	  'description' => __( 'Enter your Holiday message here:', 'holiday-mode-woocommerce' ),
-	  'active_callback' => 'hmfw_useCustomMessage_enabled',
-	) );
-
-}
-
-function hmfw_sanitize_checkbox( $checked ) {
-	return ( ( isset( $checked ) && true == $checked ) ? true : false );
-}
-
-function hmfw_useCustomMessage_enabled(){
-    $useCustomMessage = get_theme_mod( 'hmfw_holiday-useCustomMessage');
-    if( empty( $useCustomMessage ) ) {
-        return false;
-    }
-    return true;
+	printf(
+		'<div class="notice notice-error"><p>%s</p></div>',
+		wp_kses_post(
+			__( '<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active.', 'holiday-mode-woocommerce' )
+		)
+	);
 }
 
 function hmfw_isWooCommerceNotAvailable() {

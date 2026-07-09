@@ -30,6 +30,22 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
 
+// Remove options used by the WooCommerce settings page.
+$hmfw_options = array(
+	'hmfw_holiday_status',
+	'hmfw_holiday_startdate',
+	'hmfw_holiday_enddate',
+	'hmfw_holiday_use_custom_message',
+	'hmfw_holiday_message',
+	'hmfw_version',
+);
+
+foreach ( $hmfw_options as $hmfw_option ) {
+	delete_option( $hmfw_option );
+}
+
+// Remove legacy Customizer theme mods in case the migration never ran
+// (e.g. plugin was removed before it ever executed on 'init').
 $hmfw_theme_mods = array(
 	'hmfw_holiday-status',
 	'hmfw_holiday-startdate',

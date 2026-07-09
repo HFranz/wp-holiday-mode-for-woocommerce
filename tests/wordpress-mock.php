@@ -89,8 +89,42 @@ if (! function_exists('add_filter') ) {
     /**
      * Hooks a function on to a specific filter.
      */
-    function add_filter( string $tag, $functionToAdd, int $priority = 10, int $acceptedArgs = 1 )
+    function add_filter( string $tag, $functionToAdd, int $priority = 10, int $acceptedArgs = 1 ): true
     {
+        global $wp_filter;
+        if (! isset($wp_filter[ $tag ]) ) {
+            $wp_filter[ $tag ] = array();
+        }
+        $wp_filter[ $tag ][] = array(
+        'function'      => $functionToAdd,
+        'priority'      => $priority,
+        'accepted_args' => $acceptedArgs,
+        );
+        return true;
+    }
+}
+
+/**
+ * Mock apply_filters function
+ */
+if (! function_exists('apply_filters') ) {
+    function apply_filters( string $tag, $value, ...$args )
+    {
+        global $wp_filter;
+        if (empty($wp_filter[ $tag ]) ) {
+            return $value;
+        }
+
+        $callbacks = $wp_filter[ $tag ];
+        usort($callbacks, fn( $a, $b ) => $a['priority'] <=> $b['priority']);
+
+        foreach ( $callbacks as $callback ) {
+            $accepted_args = max((int) ( $callback['accepted_args'] ?? 1 ), 1);
+            $all_args      = array_merge(array( $value ), $args);
+            $value         = call_user_func_array($callback['function'], array_slice($all_args, 0, $accepted_args));
+        }
+
+        return $value;
     }
 }
 
@@ -181,6 +215,40 @@ if (! function_exists('get_option') ) {
     {
         global $_test_options;
         return $_test_options[ $option ] ?? $default;
+    }
+}
+
+/**
+ * Mock update_option function
+ */
+if (! function_exists('update_option') ) {
+    function update_option( $option, $value, $autoload = null ): bool
+    {
+        global $_test_options;
+        $_test_options[ $option ] = $value;
+        return true;
+    }
+}
+
+/**
+ * Mock delete_option function
+ */
+if (! function_exists('delete_option') ) {
+    function delete_option( $option ): bool
+    {
+        global $_test_options;
+        unset( $_test_options[ $option ] );
+        return true;
+    }
+}
+
+/**
+ * Mock admin_url function
+ */
+if (! function_exists('admin_url') ) {
+    function admin_url( $path = '', $scheme = 'admin' ): string
+    {
+        return 'http://example.com/wp-admin/' . ltrim( $path, '/' );
     }
 }
 

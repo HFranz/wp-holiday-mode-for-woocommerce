@@ -31,3 +31,49 @@ if ( ! class_exists( 'WooCommerce' ) ) {
 	class WooCommerce {}
 }
 
+/**
+ * Minimal stub of WooCommerce's WC_Settings_Page abstract class, close enough
+ * to the real implementation so HMFW_Settings can be instantiated and its
+ * get_settings() output can be tested in isolation.
+ */
+if ( ! class_exists( 'WC_Settings_Page' ) ) {
+	class WC_Settings_Page {
+		public $id    = '';
+		public $label = '';
+
+		public function __construct() {
+			add_filter( 'woocommerce_settings_tabs_array', array( $this, 'add_settings_page' ), 20 );
+			add_action( 'woocommerce_settings_' . $this->id, array( $this, 'output' ) );
+			add_action( 'woocommerce_settings_save_' . $this->id, array( $this, 'save' ) );
+		}
+
+		public function add_settings_page( $pages ) {
+			$pages[ $this->id ] = $this->label;
+			return $pages;
+		}
+
+		public function get_settings( $current_section = '' ) {
+			return array();
+		}
+
+		public function output() {
+			WC_Admin_Settings::output_fields( $this->get_settings() );
+		}
+
+		public function save() {
+			WC_Admin_Settings::save_fields( $this->get_settings() );
+		}
+	}
+}
+
+/**
+ * Stub of WooCommerce's WC_Admin_Settings helper, only providing the two
+ * static methods used by WC_Settings_Page::output()/save().
+ */
+if ( ! class_exists( 'WC_Admin_Settings' ) ) {
+	class WC_Admin_Settings {
+		public static function output_fields( $settings ) {}
+		public static function save_fields( $settings ) {}
+	}
+}
+

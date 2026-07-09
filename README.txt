@@ -1,6 +1,6 @@
 === Plugin Name ===
 Contributors: hfranz
-Tags: woocommerce, holiday, customizer, calendar, vacation
+Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
 Tested up to: 6.8
 Stable tag: 1.8.0
@@ -30,7 +30,7 @@ This section describes how to install the plugin and get it working.
 
 1. Upload `folder` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Open `Appearance -> Customize -> Holiday mode settings` to setup holiday mode
+1. Open `WooCommerce -> Settings -> Holiday Mode` to setup holiday mode
 
 == Privacy Disclosure ==
 
@@ -42,6 +42,12 @@ Screenshot-2.jpg
 Screenshot-3.jpg
 
 == Changelog ==
+
+= 1.8.0 =
+* Settings migrated from the Customizer to a dedicated page under WooCommerce -> Settings -> Holiday Mode
+* Existing Customizer settings are migrated automatically on first admin page load
+* WooCommerce HPOS (custom order tables) and Cart/Checkout Blocks compatibility declared
+* Security and reliability hardening (escaping, sanitization, timezone handling)
 
 = 1.7.1 =
 * Compatibility for WordPress 5.9
