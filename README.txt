@@ -5,7 +5,7 @@ Requires at least: 6.7
 Tested up to: 7.0
 Stable tag: 1.8.0
 Requires PHP: 8.4
-Donate link: https://impressive-pages.de/en/donate/
+Donate link: https://sevmatic.com/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,6 +42,9 @@ Screenshot-2.jpg
 Screenshot-3.jpg
 
 == Changelog ==
+
+= 1.8.1 =
+Update README.txt
 
 = 1.8.0 =
 * Settings migrated from the Customizer to a dedicated page under WooCommerce -> Settings -> Holiday Mode
