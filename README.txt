@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== Holiday Mode for WooCommerce ===
 Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
