@@ -20,7 +20,7 @@
         }
     ],
     "scripts": {
-        "make-pot": "wp i18n make-pot . languages/wp-learnsuite-brevo-mailer.pot --exclude=node_modules",
+        "make-pot": "wp i18n make-pot . languages/holiday-mode-woocommerce.pot --exclude=node_modules",
         "make-php": "wp i18n make-php languages/",
         "lint:php": "phpcs -p",
         "fix:php": "phpcbf -p",
