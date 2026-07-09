@@ -45,7 +45,7 @@ add_action( 'init', 'hmfw_load_textdomain' );
 /**
  * Load the plugin's translations.
  */
-function hmfw_load_textdomain() {
+function hmfw_load_textdomain(): void {
 	load_plugin_textdomain( 'holiday-mode-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
@@ -54,7 +54,7 @@ add_action( 'before_woocommerce_init', 'hmfw_declare_wc_compatibility' );
  * Declare compatibility with WooCommerce High-Performance Order Storage (HPOS)
  * and the Cart/Checkout blocks, so the plugin keeps working with modern WooCommerce.
  */
-function hmfw_declare_wc_compatibility() {
+function hmfw_declare_wc_compatibility(): void {
 	if ( ! class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
 		return;
 	}
@@ -70,7 +70,7 @@ add_filter( 'woocommerce_get_settings_pages', 'hmfw_add_settings_page' );
  * @param WC_Settings_Page[] $settings Registered WooCommerce settings pages.
  * @return WC_Settings_Page[] Settings pages, including our own.
  */
-function hmfw_add_settings_page( $settings ) {
+function hmfw_add_settings_page( $settings ): array {
 	$settings[] = include plugin_dir_path( __FILE__ ) . 'includes/class-hmfw-settings.php';
 
 	return $settings;
@@ -83,7 +83,7 @@ add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'hmfw_plugin_a
  * @param string[] $links Existing plugin action links.
  * @return string[] Plugin action links, including our "Settings" link.
  */
-function hmfw_plugin_action_links( $links ) {
+function hmfw_plugin_action_links( $links ): array {
 	if ( hmfw_is_woocommerce_not_available() ) {
 		return $links;
 	}
@@ -124,7 +124,7 @@ add_action( 'upgrader_process_complete', 'hmfw_migrate_after_plugin_update', 10,
  * @param \WP_Upgrader $upgrader_object Upgrader instance (unused).
  * @param array        $options         Details about the bulk/single update that just completed.
  */
-function hmfw_migrate_after_plugin_update( $upgrader_object, $options ) {
+function hmfw_migrate_after_plugin_update( $upgrader_object, $options ): void {
 	if ( 'update' !== ( $options['action'] ?? '' ) || 'plugin' !== ( $options['type'] ?? '' ) ) {
 		return;
 	}
@@ -148,7 +148,7 @@ add_action( 'init', 'hmfw_migrate_customizer_settings', 5 );
  * Migrate the legacy Customizer theme mods to WordPress options, once, when
  * upgrading from a version older than HMFW_CUSTOMIZER_MIGRATION_VERSION.
  */
-function hmfw_migrate_customizer_settings() {
+function hmfw_migrate_customizer_settings(): void {
 	$installed_version = get_option( 'hmfw_version', '0' );
 
 	if ( version_compare( $installed_version, HMFW_CUSTOMIZER_MIGRATION_VERSION, '>=' ) ) {
@@ -189,7 +189,7 @@ add_action( 'init', 'hmfw_woocommerce_holiday_mode', 10 );
  * Activate Holiday Mode: disable purchasing and show the holiday notice
  * when the shop is within the configured date range.
  */
-function hmfw_woocommerce_holiday_mode() {
+function hmfw_woocommerce_holiday_mode(): void {
 	if ( hmfw_is_woocommerce_not_available() || 'yes' !== get_option( 'hmfw_holiday_status', 'no' ) ) {
 		return;
 	}
@@ -214,7 +214,7 @@ function hmfw_woocommerce_holiday_mode() {
 /**
  * Print the holiday notice on the shop, single product, cart and checkout pages.
  */
-function hmfw_wc_shop_disabled() {
+function hmfw_wc_shop_disabled(): void {
 	$notice = 'yes' === get_option( 'hmfw_holiday_use_custom_message', 'no' ) ? get_option( 'hmfw_holiday_message' ) : get_option( 'woocommerce_demo_store_notice' );
 	wc_print_notice( wp_kses_post( $notice ), 'error' );
 }
@@ -226,7 +226,7 @@ function hmfw_wc_shop_disabled() {
  * @param string $end_date   End date, parseable by DateTime.
  * @return bool True if today falls within [start_date, end_date].
  */
-function hmfw_check_in_range( $start_date, $end_date ) {
+function hmfw_check_in_range( $start_date, $end_date ): bool {
 	try {
 		$timezone = wp_timezone();
 		$start    = new DateTime( $start_date, $timezone );
@@ -246,7 +246,7 @@ add_action( 'admin_notices', 'hmfw_wc_missing_notice' );
  * page is hooked into the WooCommerce admin menu and would otherwise be
  * invisible without any explanation.
  */
-function hmfw_wc_missing_notice() {
+function hmfw_wc_missing_notice(): void {
 	if ( ! hmfw_is_woocommerce_not_available() || ! current_user_can( 'activate_plugins' ) ) {
 		return;
 	}
@@ -264,6 +264,6 @@ function hmfw_wc_missing_notice() {
  *
  * @return bool True if WooCommerce is NOT available.
  */
-function hmfw_is_woocommerce_not_available() {
+function hmfw_is_woocommerce_not_available(): bool {
 	return ! class_exists( 'WooCommerce' );
 }

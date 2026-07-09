@@ -33,7 +33,7 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 		 * @param string $current_section Current section slug (unused, single section only).
 		 * @return array
 		 */
-		public function get_settings( $current_section = '' ) {
+		public function get_settings( $current_section = '' ): array {
 			$settings = array(
 				array(
 					'title' => __( 'Holiday Mode Settings', 'holiday-mode-woocommerce' ),
