@@ -1,0 +1,12 @@
+# Response style
+- Be concise.
+- No introductions or conclusions.
+- No explanations unless requested.
+- Output code before explanation.
+- Show only changed code.
+- Prefer unified diffs.
+- Do not regenerate unchanged files.
+- Make the smallest possible change that satisfies the request.
+- Preserve existing formatting and architecture.
+- Never repeat or summarize the prompt.
+- Assume an experienced developer.
