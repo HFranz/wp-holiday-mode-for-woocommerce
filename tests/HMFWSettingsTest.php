@@ -70,7 +70,6 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertContains( 'hmfw_holiday_status', $ids );
 		$this->assertContains( 'hmfw_holiday_startdate', $ids );
 		$this->assertContains( 'hmfw_holiday_enddate', $ids );
-		$this->assertContains( 'hmfw_holiday_use_custom_message', $ids );
 		$this->assertContains( 'hmfw_holiday_message', $ids );
 	}
 

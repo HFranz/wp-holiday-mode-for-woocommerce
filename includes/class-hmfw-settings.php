@@ -63,13 +63,6 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 					'custom_attributes' => array( 'type' => 'date' ),
 				),
 				array(
-					'title'   => __( 'Use own Holiday message', 'holiday-mode-woocommerce' ),
-					'desc'    => __( 'If activated own message can be entered otherwise Store notice from WooCommerce as Holiday message will be used for customers.', 'holiday-mode-woocommerce' ),
-					'id'      => 'hmfw_holiday_use_custom_message',
-					'type'    => 'checkbox',
-					'default' => 'no',
-				),
-				array(
 					'title'    => __( 'Vacation message', 'holiday-mode-woocommerce' ),
 					'desc_tip' => __( 'Enter your Holiday message here.', 'holiday-mode-woocommerce' ),
 					'id'       => 'hmfw_holiday_message',

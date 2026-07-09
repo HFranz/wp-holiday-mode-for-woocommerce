@@ -156,11 +156,10 @@ function hmfw_migrate_customizer_settings(): void {
 	}
 
 	$map = array(
-		'hmfw_holiday-status'           => array( 'hmfw_holiday_status', 'bool_to_yesno' ),
-		'hmfw_holiday-startdate'        => array( 'hmfw_holiday_startdate', 'raw' ),
-		'hmfw_holiday-enddate'          => array( 'hmfw_holiday_enddate', 'raw' ),
-		'hmfw_holiday-useCustomMessage' => array( 'hmfw_holiday_use_custom_message', 'bool_to_yesno' ),
-		'hmfw_holiday-message'          => array( 'hmfw_holiday_message', 'raw' ),
+		'hmfw_holiday-status'    => array( 'hmfw_holiday_status', 'bool_to_yesno' ),
+		'hmfw_holiday-startdate' => array( 'hmfw_holiday_startdate', 'raw' ),
+		'hmfw_holiday-enddate'   => array( 'hmfw_holiday_enddate', 'raw' ),
+		'hmfw_holiday-message'   => array( 'hmfw_holiday_message', 'raw' ),
 	);
 
 	foreach ( $map as $theme_mod => $mapping ) {
@@ -215,7 +214,12 @@ function hmfw_woocommerce_holiday_mode(): void {
  * Print the holiday notice on the shop, single product, cart and checkout pages.
  */
 function hmfw_wc_shop_disabled(): void {
-	$notice = 'yes' === get_option( 'hmfw_holiday_use_custom_message', 'no' ) ? get_option( 'hmfw_holiday_message' ) : get_option( 'woocommerce_demo_store_notice' );
+	$notice = get_option( 'hmfw_holiday_message' );
+
+	if ( '' === $notice ) {
+		$notice = get_option( 'woocommerce_demo_store_notice' );
+	}
+
 	wc_print_notice( wp_kses_post( $notice ), 'error' );
 }
 

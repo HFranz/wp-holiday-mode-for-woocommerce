@@ -61,8 +61,7 @@ class HolidayModeTest extends TestCase {
 		$this->assertFalse( \hmfw_is_woocommerce_not_available() );
 	}
 
-	public function testShopDisabledPrintsCustomMessageWhenEnabled(): void {
-		\update_option( 'hmfw_holiday_use_custom_message', 'yes' );
+	public function testShopDisabledPrintsCustomMessageWhenSet(): void {
 		\update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 
 		ob_start();
@@ -72,9 +71,9 @@ class HolidayModeTest extends TestCase {
 		$this->assertStringContainsString( 'We are on vacation.', $output );
 	}
 
-	public function testShopDisabledPrintsStoreNoticeWhenCustomMessageDisabled(): void {
+	public function testShopDisabledFallsBackToStoreNoticeWhenMessageEmpty(): void {
 		\update_option( 'woocommerce_demo_store_notice', 'Store notice text' );
-		\update_option( 'hmfw_holiday_use_custom_message', 'no' );
+		\update_option( 'hmfw_holiday_message', '' );
 
 		ob_start();
 		\hmfw_wc_shop_disabled();
@@ -92,7 +91,6 @@ class HolidayModeTest extends TestCase {
 		\set_theme_mod( 'hmfw_holiday-status', true );
 		\set_theme_mod( 'hmfw_holiday-startdate', '2026-01-01' );
 		\set_theme_mod( 'hmfw_holiday-enddate', '2026-01-31' );
-		\set_theme_mod( 'hmfw_holiday-useCustomMessage', false );
 		\set_theme_mod( 'hmfw_holiday-message', 'Legacy message' );
 
 		\hmfw_migrate_customizer_settings();
@@ -100,7 +98,6 @@ class HolidayModeTest extends TestCase {
 		$this->assertSame( 'yes', \get_option( 'hmfw_holiday_status' ) );
 		$this->assertSame( '2026-01-01', \get_option( 'hmfw_holiday_startdate' ) );
 		$this->assertSame( '2026-01-31', \get_option( 'hmfw_holiday_enddate' ) );
-		$this->assertSame( 'no', \get_option( 'hmfw_holiday_use_custom_message' ) );
 		$this->assertSame( 'Legacy message', \get_option( 'hmfw_holiday_message' ) );
 		$this->assertSame( HMFW_VERSION, \get_option( 'hmfw_version' ) );
 		$this->assertFalse( \get_theme_mod( 'hmfw_holiday-status', false ) );
