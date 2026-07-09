@@ -12,7 +12,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 #[CoversFunction( 'hmfw_check_in_range' )]
-#[CoversFunction( 'hmfw_isWooCommerceNotAvailable' )]
+#[CoversFunction( 'hmfw_is_woocommerce_not_available' )]
 #[CoversFunction( 'hmfw_wc_shop_disabled' )]
 #[CoversFunction( 'hmfw_declare_wc_compatibility' )]
 #[CoversFunction( 'hmfw_migrate_customizer_settings' )]
@@ -43,11 +43,11 @@ class HolidayModeTest extends TestCase {
 		$today_str = $today->format( 'Y-m-d' );
 
 		return array(
-			'today is within range'    => array( $yesterday, $tomorrow, true ),
-			'today equals start date'  => array( $today_str, $tomorrow, true ),
-			'today equals end date'    => array( $yesterday, $today_str, true ),
-			'range is in the future'   => array( $tomorrow, $tomorrow, false ),
-			'range is in the past'     => array( $yesterday, $yesterday, false ),
+			'today is within range'   => array( $yesterday, $tomorrow, true ),
+			'today equals start date' => array( $today_str, $tomorrow, true ),
+			'today equals end date'   => array( $yesterday, $today_str, true ),
+			'range is in the future'  => array( $tomorrow, $tomorrow, false ),
+			'range is in the past'    => array( $yesterday, $yesterday, false ),
 		);
 	}
 
@@ -58,7 +58,7 @@ class HolidayModeTest extends TestCase {
 	public function testIsWooCommerceNotAvailableIsFalseWhenWooCommerceClassExists(): void {
 		// A "WooCommerce" stub class is defined in bootstrap.php,
 		// simulating an active WooCommerce installation.
-		$this->assertFalse( \hmfw_isWooCommerceNotAvailable() );
+		$this->assertFalse( \hmfw_is_woocommerce_not_available() );
 	}
 
 	public function testShopDisabledPrintsCustomMessageWhenEnabled(): void {
@@ -196,9 +196,9 @@ class HolidayModeTest extends TestCase {
 		\hmfw_migrate_after_plugin_update(
 			new \stdClass(),
 			array(
-				'action'  => 'update',
-				'type'    => 'theme',
-				'themes'  => array( 'some-theme' ),
+				'action' => 'update',
+				'type'   => 'theme',
+				'themes' => array( 'some-theme' ),
 			)
 		);
 

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Fired when the plugin is uninstalled.
  *
@@ -57,4 +56,3 @@ $hmfw_theme_mods = array(
 foreach ( $hmfw_theme_mods as $hmfw_theme_mod ) {
 	remove_theme_mod( $hmfw_theme_mod );
 }
-

@@ -2,8 +2,21 @@
 /**
  * PHPUnit bootstrap file for holiday-mode-woocommerce.
  *
+ * The WooCommerce/WC_Settings_Page/WC_Admin_Settings stubs below are 1:1
+ * mocks of already-documented WooCommerce core classes, so a few sniffs are
+ * disabled for this file only (see tests/wordpress-mock.php for the same,
+ * more detailed reasoning): missing per-member/per-method docblocks and
+ * unused constructor parameters are inherent to faithfully mirroring those
+ * classes' real signatures, not a quality issue in our own code.
+ *
  * @package IPHolidayModeWooCommerce
  */
+
+// phpcs:disable Squiz.Commenting.ClassComment
+// phpcs:disable Squiz.Commenting.VariableComment
+// phpcs:disable Squiz.Commenting.FunctionComment
+// phpcs:disable Generic.CodeAnalysis.UnusedFunctionParameter
+// phpcs:disable Generic.Files.OneObjectStructurePerFile
 
 // Define ABSPATH for WordPress compatibility.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,7 +38,7 @@ require_once __DIR__ . '/wordpress-mock.php';
 // Load the plugin's main file so all hmfw_* functions become available for testing.
 require_once dirname( __DIR__ ) . '/holiday-mode-woocommerce.php';
 
-// Stub for the WooCommerce main class so hmfw_isWooCommerceNotAvailable()
+// Stub for the WooCommerce main class so hmfw_is_woocommerce_not_available()
 // can be tested for the "WooCommerce is active" branch as well.
 if ( ! class_exists( 'WooCommerce' ) ) {
 	class WooCommerce {}
@@ -76,4 +89,3 @@ if ( ! class_exists( 'WC_Admin_Settings' ) ) {
 		public static function save_fields( $settings ) {}
 	}
 }
-

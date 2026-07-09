@@ -13,15 +13,23 @@ namespace Hfranz\WpHolidayModeForWoocommerce\Tests;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Hook registration order tests, run in isolated processes.
+ */
 #[RunTestsInSeparateProcesses]
 class HookRegistrationTest extends TestCase {
 
+	/**
+	 * The Customizer migration must be registered on 'init' with a lower
+	 * priority than the holiday-mode activation check, so migrated options
+	 * are already available the first time the shop is activated.
+	 */
 	public function testMigrationIsHookedOnInitBeforeHolidayModeActivation(): void {
 		global $wp_filter;
 
 		$this->assertArrayHasKey( 'init', $wp_filter, 'Nothing is hooked into init at all.' );
 
-		$migrate_priority = $this->findPriority( $wp_filter['init'], 'hmfw_migrate_customizer_settings' );
+		$migrate_priority  = $this->findPriority( $wp_filter['init'], 'hmfw_migrate_customizer_settings' );
 		$activate_priority = $this->findPriority( $wp_filter['init'], 'hmfw_woocommerce_holiday_mode' );
 
 		$this->assertNotNull( $migrate_priority, 'hmfw_migrate_customizer_settings is not hooked into init.' );
@@ -37,7 +45,11 @@ class HookRegistrationTest extends TestCase {
 	}
 
 	/**
-	 * @param array<int, array{function: mixed, priority: int}> $callbacks
+	 * Find the registered priority of a callback for a given hook.
+	 *
+	 * @param array<int, array{function: mixed, priority: int}> $callbacks Registered callbacks for a hook.
+	 * @param string                                            $function_name Name of the callback function to find.
+	 * @return int|null The registered priority, or null if not found.
 	 */
 	private function findPriority( array $callbacks, string $function_name ): ?int {
 		foreach ( $callbacks as $callback ) {
@@ -49,4 +61,3 @@ class HookRegistrationTest extends TestCase {
 		return null;
 	}
 }
-

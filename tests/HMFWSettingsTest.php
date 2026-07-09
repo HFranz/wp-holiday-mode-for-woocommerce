@@ -10,9 +10,15 @@ namespace Hfranz\WpHolidayModeForWoocommerce\Tests;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Unit tests for the HMFW_Settings WooCommerce settings page.
+ */
 #[CoversClass( \HMFW_Settings::class )]
 class HMFWSettingsTest extends TestCase {
 
+	/**
+	 * Reset the global hook registry before each test.
+	 */
 	protected function setUp(): void {
 		parent::setUp();
 
@@ -20,10 +26,18 @@ class HMFWSettingsTest extends TestCase {
 		$wp_filter = array();
 	}
 
+	/**
+	 * Instantiate a fresh HMFW_Settings page for each test.
+	 *
+	 * @return \HMFW_Settings
+	 */
 	private function createSettingsPage(): \HMFW_Settings {
 		return require dirname( __DIR__ ) . '/includes/class-hmfw-settings.php';
 	}
 
+	/**
+	 * The settings page must expose the expected WooCommerce tab id/label.
+	 */
 	public function testIdAndLabelAreSet(): void {
 		$page = $this->createSettingsPage();
 
@@ -31,6 +45,9 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertSame( 'Holiday Mode', $page->label );
 	}
 
+	/**
+	 * Instantiating the page must register it with WooCommerce's settings tabs.
+	 */
 	public function testSettingsPageIsRegisteredWithWooCommerceTabs(): void {
 		$this->createSettingsPage();
 
@@ -40,6 +57,9 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertSame( 'Holiday Mode', $tabs['holiday_mode'] );
 	}
 
+	/**
+	 * get_settings() must expose every option id used elsewhere in the plugin.
+	 */
 	public function testGetSettingsContainsAllExpectedFieldIds(): void {
 		$page     = $this->createSettingsPage();
 		$settings = $page->get_settings();
@@ -54,6 +74,9 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertContains( 'hmfw_holiday_message', $ids );
 	}
 
+	/**
+	 * The settings array must be wrapped by a matching title/sectionend pair.
+	 */
 	public function testGetSettingsStartsWithTitleAndEndsWithSectionend(): void {
 		$page     = $this->createSettingsPage();
 		$settings = $page->get_settings();
@@ -63,6 +86,9 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertSame( $settings[0]['id'], end( $settings )['id'] );
 	}
 
+	/**
+	 * All checkbox fields must default to 'no' (WooCommerce's yes/no convention).
+	 */
 	public function testCheckboxFieldsDefaultToNo(): void {
 		$page     = $this->createSettingsPage();
 		$settings = $page->get_settings();
@@ -76,6 +102,9 @@ class HMFWSettingsTest extends TestCase {
 		}
 	}
 
+	/**
+	 * The start/end date fields must render as HTML5 date inputs.
+	 */
 	public function testDateFieldsUseHtml5DateInput(): void {
 		$page     = $this->createSettingsPage();
 		$settings = $page->get_settings();
@@ -90,6 +119,9 @@ class HMFWSettingsTest extends TestCase {
 		}
 	}
 
+	/**
+	 * The vacation message field must be a textarea with the expected default text.
+	 */
 	public function testMessageFieldIsTextareaWithDefaultText(): void {
 		$page     = $this->createSettingsPage();
 		$settings = $page->get_settings();
@@ -103,6 +135,9 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertSame( 'I am on vacation.', $message_field['default'] );
 	}
 
+	/**
+	 * The settings array must be filterable via 'hmfw_holiday_mode_settings'.
+	 */
 	public function testGetSettingsIsFilterable(): void {
 		$page = $this->createSettingsPage();
 
@@ -125,6 +160,9 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertContains( 'hmfw_test_extra_field', $ids );
 	}
 
+	/**
+	 * The current section argument must be passed through to the filter unchanged.
+	 */
 	public function testGetSettingsPassesCurrentSectionToFilter(): void {
 		$page = $this->createSettingsPage();
 
@@ -144,4 +182,3 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertSame( 'some-section', $received_section );
 	}
 }
-

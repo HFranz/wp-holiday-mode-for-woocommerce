@@ -96,4 +96,3 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 endif;
 
 return new HMFW_Settings();
-

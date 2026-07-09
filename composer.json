@@ -22,8 +22,8 @@
     "scripts": {
         "make-pot": "wp i18n make-pot . languages/wp-learnsuite-brevo-mailer.pot --exclude=node_modules",
         "make-php": "wp i18n make-php languages/",
-        "lint:php": "phpcs -p --standard=WordPress --ignore=languages,vendor,node_modules .",
-        "fix:php": "phpcbf -p --standard=WordPress --ignore=languages,vendor,node_modules .",
+        "lint:php": "phpcs -p",
+        "fix:php": "phpcbf -p",
         "test": "phpunit"
     },
     "config": {
