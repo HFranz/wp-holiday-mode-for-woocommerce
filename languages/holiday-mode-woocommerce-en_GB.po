@@ -4,7 +4,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: WPML_EXPORT_holiday-mode-woocommerce\n"
-"POT-Creation-Date: \n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/holiday-mode-for-"
+"woocommerce\n"
+"POT-Creation-Date: 2026-07-09T21:38:58+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -13,63 +15,124 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.9\n"
+
+#. Plugin Name of the plugin
+#: holiday-mode-woocommerce.php
+msgid "Holiday Mode for WooCommerce"
+msgstr "Holiday Mode for WooCommerce"
+
+#. Plugin URI of the plugin
+#: holiday-mode-woocommerce.php
+msgid "https://wordpress.org/plugins/holiday-mode-for-woocommerce/"
+msgstr ""
+
+#. Description of the plugin
+#: holiday-mode-woocommerce.php
+msgid ""
+"Set your WooCommerce shop to holiday/vacation mode. Use date range to "
+"schedule closed time."
+msgstr ""
+"Set your WooCommerce shop to holiday/vacation mode. Use date range to "
+"schedule closed time."
+
+#. Author of the plugin
+#: holiday-mode-woocommerce.php
+msgid "Heinrich Franz"
+msgstr ""
+
+#. Author URI of the plugin
+#: holiday-mode-woocommerce.php
+msgid "https://sevmatic/?source=wordpress"
+msgstr ""
+
+#: holiday-mode-woocommerce.php:91
+msgid "Settings"
+msgstr "Settings"
+
+#: holiday-mode-woocommerce.php:261
+msgid ""
+"<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be "
+"installed and active."
+msgstr ""
+"<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be "
+"installed and active."
+
+# wpml-name: 55fbaa3cd2fa799b63eb0356a59e4399
+#: includes/class-hmfw-settings.php:25
+msgid "Holiday Mode"
+msgstr "Holiday Mode"
+
+# wpml-name: 93ff441615c9aa8ef86fa6fd530ddbac
+#: includes/class-hmfw-settings.php:39
+msgid "Holiday Mode Settings"
+msgstr "Holiday Mode Settings"
+
+#: includes/class-hmfw-settings.php:42
+msgid ""
+"Set your WooCommerce shop to holiday/vacation mode. Use a date range to "
+"schedule closed time."
+msgstr ""
+"Set your WooCommerce shop to holiday/vacation mode. Use a date range to "
+"schedule closed time."
+
+# wpml-name: a13367a8e2a3f3bf4f3409079e3fdf87
+#: includes/class-hmfw-settings.php:45
+msgid "Activate"
+msgstr "Activate"
+
+# wpml-name: 55fbaa3cd2fa799b63eb0356a59e4399
+#: includes/class-hmfw-settings.php:46
+msgid "Activate Holiday Mode"
+msgstr "Activate Holiday Mode"
+
+# wpml-name: d15693fc0403d667bb6559d60ee39a1f
+#: includes/class-hmfw-settings.php:52
+msgid "Start of Holidays"
+msgstr "Start of Holidays"
+
+# wpml-name: a6ac6d860230fbd84432e9a06fd0db1e
+#: includes/class-hmfw-settings.php:53
+msgid "Enter first day of Holidays here."
+msgstr "Enter first day of Holidays here."
+
+# wpml-name: 3c85a4035d1cb428e0a6b6c549ff8d98
+#: includes/class-hmfw-settings.php:59
+msgid "End of Holidays"
+msgstr "End of Holidays"
+
+# wpml-name: d558df7a794c9cbc4701d2427f7117ba
+#: includes/class-hmfw-settings.php:60
+msgid "Enter last day of Holidays here."
+msgstr "Enter last day of Holidays here."
 
 # wpml-name: fcc7c51d41b07966c3e9192b7320a35b
+#: includes/class-hmfw-settings.php:66
 msgid "Vacation message"
 msgstr "Vacation message"
 
+# wpml-name: c9027a8f560165196ebefb8b92cc6564
+#: includes/class-hmfw-settings.php:67
+msgid "Enter your Holiday message here."
+msgstr "Enter your Holiday message here."
+
 # wpml-name: af784c5a6ae594d7dcd99f8da301bd5a
+#: includes/class-hmfw-settings.php:71
 msgid "I am on vacation."
 msgstr "I am on vacation."
 
 # wpml-name: 418c23834fc746227d6ba6bbf181e8b5
-msgid "mm/dd/yyyy"
-msgstr "mm/dd/yyyy"
-
-# wpml-name: c9027a8f560165196ebefb8b92cc6564
-msgid "Enter your Holiday message here:"
-msgstr "Enter your Holiday message here:"
+#~ msgid "mm/dd/yyyy"
+#~ msgstr "mm/dd/yyyy"
 
 # wpml-name: a473406f38260e487412eec08d9055f1
-msgid ""
-"If activated own message can be entered otherwise Store notice from "
-"WooCommerce as Holiday message will be used for customers."
-msgstr ""
-"If activated own message can be entered otherwise Store notice from "
-"WooCommerce as Holiday message will be used for customers."
+#~ msgid ""
+#~ "If activated own message can be entered otherwise Store notice from "
+#~ "WooCommerce as Holiday message will be used for customers."
+#~ msgstr ""
+#~ "If activated own message can be entered otherwise Store notice from "
+#~ "WooCommerce as Holiday message will be used for customers."
 
 # wpml-name: 5a1f9ea139a82ef0c0a29d86a6d04222
-msgid "Use own Holiday message"
-msgstr "Use own Holiday message"
-
-# wpml-name: d558df7a794c9cbc4701d2427f7117ba
-msgid "Enter last day of Holidays here:"
-msgstr "Enter last day of Holidays here:"
-
-# wpml-name: 3c85a4035d1cb428e0a6b6c549ff8d98
-msgid "End of Holidays"
-msgstr "End of Holidays"
-
-# wpml-name: a6ac6d860230fbd84432e9a06fd0db1e
-msgid "Enter first day of Holidays here:"
-msgstr "Enter first day of Holidays here:"
-
-# wpml-name: d15693fc0403d667bb6559d60ee39a1f
-msgid "Start of Holidays"
-msgstr "Start of Holidays"
-
-# wpml-name: 55fbaa3cd2fa799b63eb0356a59e4399
-msgid "Activate Holiday Mode"
-msgstr "Activate Holiday Mode"
-
-# wpml-name: a13367a8e2a3f3bf4f3409079e3fdf87
-msgid "Activate"
-msgstr "Activate"
-
-# wpml-name: 93ff441615c9aa8ef86fa6fd530ddbac
-msgid "Holiday Mode Settings"
-msgstr "Holiday Mode Settings"
-
-msgid "Holiday Mode for WooCommerce"
-msgstr "Holiday Mode for WooCommerce"
+#~ msgid "Use own Holiday message"
+#~ msgstr "Use own Holiday message"
