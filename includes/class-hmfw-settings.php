@@ -39,7 +39,7 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 					'title' => __( 'Holiday Mode Settings', 'holiday-mode-woocommerce' ),
 					'type'  => 'title',
 					'id'    => 'hmfw_settings_title',
-					'desc'  => __( 'Set your WooCommerce shop to holiday/vacation mode. Use a date range to schedule closed time.', 'holiday-mode-woocommerce' ),
+					'desc'  => __( 'Set your WooCommerce® shop to holiday or vacation mode. Use a date range to schedule closed time.', 'holiday-mode-woocommerce' ),
 				),
 				array(
 					'title'   => __( 'Activate', 'holiday-mode-woocommerce' ),
