@@ -1,5 +1,4 @@
 .idea
 /node_modules/
 /vendor/
-/.phpunit.result.cache
-/vendor/
+/.phpunit.cache/test-results
