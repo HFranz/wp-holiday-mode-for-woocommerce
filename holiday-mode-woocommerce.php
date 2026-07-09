@@ -39,7 +39,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'HMFW_VERSION', '1.8.0' );
+define( 'HMFW_VERSION', '1.8.3' );
 
 add_action( 'init', 'hmfw_load_textdomain' );
 /**
