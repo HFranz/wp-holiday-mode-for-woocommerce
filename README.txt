@@ -46,6 +46,9 @@ screenshot-2.jpg
 
 == Changelog ==
 
+= 1.8.3 =
+Minor translations update
+
 = 1.8.2 =
 Update plugins meta data
 
