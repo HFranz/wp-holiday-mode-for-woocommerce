@@ -1,10 +1,10 @@
 === Plugin Name ===
 Contributors: hfranz
 Tags: woocommerce, holiday, customizer, calendar, vacation
-Requires at least: 4.9
-Tested up to: 6.3
-Stable tag: 1.7.1
-Requires PHP: 7.4
+Requires at least: 6.7
+Tested up to: 6.8
+Stable tag: 1.8.0
+Requires PHP: 8.4
 Donate link: https://impressive-pages.de/en/donate/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

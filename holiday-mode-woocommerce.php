@@ -16,7 +16,7 @@
  * Plugin Name:       Holiday Mode for WooCommerce
  * Plugin URI: 	  	  https://wordpress.org/plugins/holiday-mode-for-woocommerce/
  * Description:       Set your WooCommerce shop to holiday/vacation mode. Use date range to schedule closed time.
- * Version:           1.7.1
+ * Version:           1.8.0
  * Author:            Heinrich Franz
  * Author URI:        https://sevmatic/?source=wordpress
  * License:           GPL-2.0+
@@ -25,6 +25,9 @@
  * Domain Path: 	  /languages
  * Requires at least: 6.7
  * Requires PHP:      8.4
+ * Requires Plugins:  woocommerce
+ * WC requires at least: 8.0
+ * WC tested up to:   9.4
  */
 
 /*
@@ -37,11 +40,25 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'IPHolidayModeWooCommerce_VERSION', '1.7.0' );
+define( 'HMFW_VERSION', '1.8.0' );
 
 add_action( 'init', 'hmfw_load_textdomain' );
 function hmfw_load_textdomain() {
     load_plugin_textdomain( 'holiday-mode-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' ); 
+}
+
+/**
+ * Declare compatibility with WooCommerce High-Performance Order Storage (HPOS)
+ * and the Cart/Checkout blocks, so the plugin keeps working with modern WooCommerce.
+ */
+add_action( 'before_woocommerce_init', 'hmfw_declare_wc_compatibility' );
+function hmfw_declare_wc_compatibility() {
+	if ( ! class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+		return;
+	}
+
+	\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
 }
 
 add_action ('init', 'hmfw_woocommerce_holiday_mode');
@@ -69,19 +86,22 @@ function hmfw_woocommerce_holiday_mode() {
  
 // Show Holiday Notice
 function hmfw_wc_shop_disabled() {
-	$notice = get_theme_mod( 'hmfw_holiday-useCustomMessage', 0) == true ? get_theme_mod( 'hmfw_holiday-message') : get_option( 'woocommerce_demo_store_notice' );
-	wc_print_notice($notice, 'error');
+	$notice = get_theme_mod( 'hmfw_holiday-useCustomMessage', 0 ) == true ? get_theme_mod( 'hmfw_holiday-message' ) : get_option( 'woocommerce_demo_store_notice' );
+	wc_print_notice( wp_kses_post( $notice ), 'error' );
 }
 
-function hmfw_check_in_range($start_date, $end_date) {
-	$timezone = get_option('timezone_string');
-  	// Convert to timestamp
-  	$start = strtotime($start_date);
-  	$end = strtotime($end_date);
-  	$check = strtotime('today midnight'. ' '. $timezone);
+function hmfw_check_in_range( $start_date, $end_date ) {
+	try {
+		$timezone = wp_timezone();
+		$start    = new DateTime( $start_date, $timezone );
+		$end      = new DateTime( $end_date, $timezone );
+		$today    = new DateTime( 'today midnight', $timezone );
+	} catch ( Exception $e ) {
+		return false;
+	}
 
-  	// Check that user date is between start & end
-  	return (($start <= $check ) && ($check <= $end));
+	// Check that today's date is between start & end.
+	return ( $start <= $today && $today <= $end );
 }
 
 add_action( 'customize_register', 'hmfw_starter_customize_register');
@@ -125,12 +145,12 @@ function hmfw_starter_customize_register( $wp_customize )
 
 	$wp_customize->add_setting( 'hmfw_holiday-startdate', array(
 		  'capability' => 'edit_theme_options',
-		  'sanitize_callback' => '',
+		  'sanitize_callback' => 'sanitize_text_field',
 		) );
 	
 	$wp_customize->add_setting( 'hmfw_holiday-enddate', array(
 		'capability' => 'edit_theme_options',
-		'sanitize_callback' => '',
+		'sanitize_callback' => 'sanitize_text_field',
 	) );
 
 	$wp_customize->add_control( 'hmfw_holiday-startdate', array(
@@ -139,7 +159,7 @@ function hmfw_starter_customize_register( $wp_customize )
 	  'label' => __( 'Start of Holidays', 'holiday-mode-woocommerce' ),
 	  'description' => __( 'Enter first day of Holidays here:', 'holiday-mode-woocommerce' ),
 	  'input_attrs' => array(
-		'placeholder' => __( 'mm/dd/yyyy' ),
+		'placeholder' => __( 'mm/dd/yyyy', 'holiday-mode-woocommerce' ),
 	  ),
 	) );
 	
@@ -194,6 +214,6 @@ function hmfw_useCustomMessage_enabled(){
     return true;
 }
 
-function hmfw_isWooCommerceNotAvailable(){
-    return !class_exists( 'woocommerce' ) ? true : false;
+function hmfw_isWooCommerceNotAvailable() {
+    return ! class_exists( 'WooCommerce' );
 }

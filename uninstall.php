@@ -29,3 +29,16 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 	exit;
 }
+
+$hmfw_theme_mods = array(
+	'hmfw_holiday-status',
+	'hmfw_holiday-startdate',
+	'hmfw_holiday-enddate',
+	'hmfw_holiday-useCustomMessage',
+	'hmfw_holiday-message',
+);
+
+foreach ( $hmfw_theme_mods as $hmfw_theme_mod ) {
+	remove_theme_mod( $hmfw_theme_mod );
+}
+

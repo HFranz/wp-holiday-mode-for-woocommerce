@@ -943,3 +943,73 @@ if (! function_exists('wp_date') ) {
     }
 }
 
+/**
+ * Mock wp_timezone function
+ */
+if (! function_exists('wp_timezone') ) {
+    function wp_timezone(): DateTimeZone
+    {
+        return new DateTimeZone( 'UTC' );
+    }
+}
+
+/**
+ * Mock wp_kses_post function
+ */
+if (! function_exists('wp_kses_post') ) {
+    function wp_kses_post( $string ): string
+    {
+        return wp_kses( $string, array() );
+    }
+}
+
+/**
+ * Mock theme mod storage & functions
+ */
+global $_test_theme_mods;
+$_test_theme_mods = array();
+
+if (! function_exists('get_theme_mod') ) {
+    function get_theme_mod( $name, $default = false )
+    {
+        global $_test_theme_mods;
+        return $_test_theme_mods[ $name ] ?? $default;
+    }
+}
+
+if (! function_exists('set_theme_mod') ) {
+    function set_theme_mod( $name, $value ): void
+    {
+        global $_test_theme_mods;
+        $_test_theme_mods[ $name ] = $value;
+    }
+}
+
+if (! function_exists('remove_theme_mod') ) {
+    function remove_theme_mod( $name ): void
+    {
+        global $_test_theme_mods;
+        unset( $_test_theme_mods[ $name ] );
+    }
+}
+
+/**
+ * Mock wc_print_notice function
+ */
+if (! function_exists('wc_print_notice') ) {
+    function wc_print_notice( $message, $notice_type = 'success' ): void
+    {
+        echo '<div class="woocommerce-' . esc_attr( $notice_type ) . '">' . $message . '</div>';
+    }
+}
+
+/**
+ * Mock is_product function
+ */
+if (! function_exists('is_product') ) {
+    function is_product(): bool
+    {
+        return false;
+    }
+}
+
