@@ -140,6 +140,10 @@ function hmfw_migrate_after_plugin_update( $upgrader_object, $options ): void {
  * Version of this plugin at which the Customizer settings were migrated to
  * options managed by the WooCommerce settings page. Used as the threshold
  * for hmfw_migrate_customizer_settings() below.
+ *
+ * This must stay fixed at the version below which the Customizer settings
+ * existed - it must NOT be bumped alongside HMFW_VERSION on future releases,
+ * otherwise the migration would incorrectly re-run on every update.
  */
 define( 'HMFW_CUSTOMIZER_MIGRATION_VERSION', '1.8.0' );
 
