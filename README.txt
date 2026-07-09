@@ -9,32 +9,36 @@ Donate link: https://sevmatic.com/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Set your WooCommerce® shop to holiday/vacation mode. Use date range to schedule closed time.
+Set your WooCommerce® shop to holiday or vacation mode with ease. Schedule temporary shop closures using a flexible date range and keep your customers informed while you are away.
 
 == Description ==
 
-Set your WooCommerce® shop to holiday/vacation mode. Use date range to schedule closed time. You can use WooCommerce® store notice or separate message to display information to your customers.
+WooCommerce® Holiday Mode allows you to temporarily pause your online store during holidays, vacations, maintenance periods, or other planned breaks.
 
-*   Disable Orders (remove add to cart button and display message)
-*   Disable Cart (items in active carts will be removed when activated holiday mode)
-*   Disable Checkout
-*   Display Custom Notification to your clients or use WooCommerce® store notice
-*   Set up a Start and End date for your holidays
-*   Automatically disable mode when vacation ends
+Define a start and end date for your closed period and automatically enable or disable holiday mode. During this time, you can display a prominently visible custom absence message to inform your customers about your temporary closure, return date, or other important information.
+
+Features:
+
+Disable new orders by removing the add-to-cart button and displaying a custom message
+Disable the shopping cart (existing cart items will be removed when holiday mode is activated)
+Disable checkout during the holiday period
+Display a prominent custom absence message to inform customers about your temporary closure
+Schedule holiday mode with a specific start and end date
+Automatically deactivate holiday mode when the vacation period ends
 
 WooCommerce® is a registered trademark of Automattic Inc.
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
+Follow these steps to install and configure the plugin:
 
-1. Upload `folder` to the `/wp-content/plugins/` directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Open `WooCommerce -> Settings -> Holiday Mode` to setup holiday mode
+Upload the plugin folder to the /wp-content/plugins/ directory
+Activate the plugin through the "Plugins" menu in WordPress
+Go to WooCommerce -> Settings -> Holiday Mode to configure your settings
 
 == Privacy Disclosure ==
 
-This plugin does not store any personal data.
+This plugin does not collect, process, or store any personal data.
 
 == Screenshots ==
 Screenshot-1.jpg
