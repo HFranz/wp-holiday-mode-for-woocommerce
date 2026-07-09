@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: WPML_EXPORT_holiday-mode-woocommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/holiday-mode-for-"
 "woocommerce\n"
-"POT-Creation-Date: 2026-07-09T21:38:58+00:00\n"
+"POT-Creation-Date: 2026-07-09T23:14:57+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -29,12 +29,8 @@ msgstr ""
 
 #. Description of the plugin
 #: holiday-mode-woocommerce.php
-msgid ""
-"Set your WooCommerce shop to holiday/vacation mode. Use date range to "
-"schedule closed time."
-msgstr ""
-"Set your WooCommerce shop to holiday/vacation mode. Use date range to "
-"schedule closed time."
+msgid "Set your WooCommerce® shop to holiday or vacation mode with ease."
+msgstr "Set your WooCommerce® shop to holiday or vacation mode with ease."
 
 #. Author of the plugin
 #: holiday-mode-woocommerce.php
@@ -50,7 +46,7 @@ msgstr ""
 msgid "Settings"
 msgstr "Settings"
 
-#: holiday-mode-woocommerce.php:261
+#: holiday-mode-woocommerce.php:265
 msgid ""
 "<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be "
 "installed and active."
