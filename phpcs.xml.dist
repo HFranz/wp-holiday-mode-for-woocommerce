@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<ruleset name="HolidayModeForWooCommerce">
+	<description>Coding standard for the Holiday Mode for WooCommerce plugin, including its test suite.</description>
+
+	<file>.</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+	<exclude-pattern>*/node_modules/*</exclude-pattern>
+	<exclude-pattern>*/languages/*</exclude-pattern>
+
+	<arg value="sp"/>
+	<arg name="colors"/>
+	<arg name="extensions" value="php"/>
+
+	<!-- Full WordPress standard everywhere, including tests/: test code is just as -->
+	<!-- important as production code and should be held to the same bar. -->
+	<!--
+		Universal.WhiteSpace.PrecisionAlignment is purely cosmetic (extra alignment
+		spaces after tabs) and, combined with tab-indentation, causes PHPCBF to
+		loop indefinitely without converging (a known upstream PHPCBF limitation).
+		Disabled entirely; it has no security or functional relevance.
+	-->
+	<rule ref="WordPress">
+		<exclude name="Universal.WhiteSpace.PrecisionAlignment"/>
+	</rule>
+
+	<!--
+		The only sniff excluded for tests/ is file naming: PHPUnit test discovery
+		(phpunit.xml `<directory suffix="Test.php">`) and our PSR-4 autoload mapping
+		(composer.json) both require file names to match the class name exactly
+		(e.g. HolidayModeTest.php). WordPress.Files.FileName instead demands
+		lowercase-with-hyphens / "class-*.php" names, which would break both PHPUnit's
+		file discovery and PSR-4 autoloading. This is a genuine, unavoidable conflict
+		between two ecosystems - not a quality issue - so only this one sniff is
+		relaxed for tests/, every other check (docs, formatting, security, globals
+		override, etc.) still applies in full.
+	-->
+	<rule ref="WordPress.Files.FileName">
+		<exclude-pattern>tests/*</exclude-pattern>
+	</rule>
+</ruleset>
+
