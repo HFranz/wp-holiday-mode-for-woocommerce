@@ -1,0 +1,58 @@
+name: Build and Package
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-package:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite
+          coverage: none
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run Unit tests
+        run: composer test
+
+      - name: Reinstall production dependencies
+        run: |
+          rm -rf vendor
+          composer install --no-dev --prefer-dist --no-progress --optimize-autoloader
+
+      - name: Create plugin ZIP
+        run: |
+          mkdir build
+          rsync -av . build/holiday-mode-for-woocommerce \
+            --exclude='build' \
+            --exclude='.git' \
+            --exclude='.github' \
+            --exclude='tests' \
+            --exclude='node_modules' \
+            --exclude='.gitignore' \
+            --exclude='phpunit.xml' \
+            --exclude='composer.*'
+          cd build
+          zip -r ../wp-holiday-mode-for-woocommerce.zip holiday-mode-for-woocommerce
+
+      - name: Upload Plugin ZIP as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-zip
+          path: "*.zip"
+          retention-days: 30
+
+      - name: Verify Plugin ZIP
+        run: ls -lh *.zip
