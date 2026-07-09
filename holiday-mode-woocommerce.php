@@ -8,7 +8,7 @@
  * registers the activation and deactivation functions, and defines a function
  * that starts the plugin.
  *
- * @link              https://impressive-pages.de/?source=wordpress
+ * @link              https://sevmatic/?source=wordpress
  * @since             1.0.0
  * @package           IPHolidayModeWooCommerce
  *
@@ -18,7 +18,7 @@
  * Description:       Set your WooCommerce shop to holiday/vacation mode. Use date range to schedule closed time.
  * Version:           1.7.1
  * Author:            Heinrich Franz
- * Author URI:        https://impressive-pages.de/?source=wordpress
+ * Author URI:        https://sevmatic/?source=wordpress
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
  * Text Domain:       holiday-mode-woocommerce
