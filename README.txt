@@ -2,7 +2,7 @@
 Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
-Tested up to: 6.8
+Tested up to: 7.0
 Stable tag: 1.8.0
 Requires PHP: 8.4
 Donate link: https://impressive-pages.de/en/donate/
