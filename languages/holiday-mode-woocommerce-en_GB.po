@@ -42,7 +42,7 @@ msgstr ""
 msgid "Settings"
 msgstr "Settings"
 
-#: holiday-mode-woocommerce.php:327
+#: holiday-mode-woocommerce.php:334
 msgid "<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active."
 msgstr "<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active."
 
