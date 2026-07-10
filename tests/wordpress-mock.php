@@ -1125,6 +1125,18 @@ if ( ! function_exists( 'is_checkout' ) ) {
 	}
 }
 
+/**
+ * Mock wp_is_block_theme function. Controllable via the global
+ * $_test_is_block_theme so tests can simulate classic vs. block themes.
+ * Defaults to false (classic theme) to match the existing test suite.
+ */
+if ( ! function_exists( 'wp_is_block_theme' ) ) {
+	function wp_is_block_theme(): bool {
+		global $_test_is_block_theme;
+		return ! empty( $_test_is_block_theme );
+	}
+}
+
 
 /**
  * Mock wp_cache_flush function. Counts calls in $_test_wp_cache_flush_count

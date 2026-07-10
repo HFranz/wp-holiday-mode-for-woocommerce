@@ -230,27 +230,39 @@ function hmfw_woocommerce_holiday_mode(): void {
 	// independently of woocommerce_is_purchasable.
 	remove_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
 
-	add_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled', 10 );
-	// Registered unconditionally (not guarded by is_product()): conditional
-	// tags are not yet reliable on 'init', since the main query has not run
-	// yet at this point. This hook only ever fires on single product pages
-	// anyway, so the guard was both redundant and broken.
-	add_action( 'woocommerce_before_single_product', 'hmfw_wc_shop_disabled', 10 );
-	add_action( 'woocommerce_before_cart', 'hmfw_wc_shop_disabled', 10 );
-	add_action( 'woocommerce_before_checkout_form', 'hmfw_wc_shop_disabled', 10 );
+	// Block themes (e.g. Twenty Twenty-Five) render the *entire* block
+	// template via get_the_block_template_html() before wp_head()/
+	// wp_body_open() ever fire (see wp-includes/template-canvas.php) - the
+	// classic content hooks below therefore all run during that early,
+	// pre-render pass, in whatever order the blocks happen to appear in the
+	// template. WooCommerce's own default block-based Shop template places
+	// its "Legacy Template" block (which fires woocommerce_before_main_content)
+	// *after* the archive title and result count blocks, so printing there
+	// would put the notice below "Shop / X results", not at the very top of
+	// the page as intended. To guarantee top placement, classic themes keep
+	// using the classic hooks (their natural top-to-bottom render order
+	// already puts wp_body_open first), while block themes rely exclusively
+	// on the wp_body_open hook below, which always executes - and is echoed
+	// - before any block/template output.
+	if ( ! wp_is_block_theme() ) {
+		add_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled', 10 );
+		// Registered unconditionally (not guarded by is_product()): conditional
+		// tags are not yet reliable on 'init', since the main query has not run
+		// yet at this point. This hook only ever fires on single product pages
+		// anyway, so the guard was both redundant and broken.
+		add_action( 'woocommerce_before_single_product', 'hmfw_wc_shop_disabled', 10 );
+		add_action( 'woocommerce_before_cart', 'hmfw_wc_shop_disabled', 10 );
+		add_action( 'woocommerce_before_checkout_form', 'hmfw_wc_shop_disabled', 10 );
+	}
 
-	// Fallback for block themes: when a WooCommerce archive/cart/checkout
-	// template has been customized in the Site Editor to use native blocks
-	// (e.g. "Product Collection") instead of the "Legacy Template" block,
-	// none of the classic action hooks above ever fire, so the notice would
-	// silently disappear (most commonly noticed on /shop). wp_body_open is
-	// called right after the opening <body> tag - WordPress core itself
-	// guarantees this for block themes (template-canvas.php), and it is
-	// standard practice in classic theme header.php files since WP 5.2 - so
-	// it reliably catches those cases while still keeping the notice near
-	// the top of the page. hmfw_wc_shop_disabled() already guards against
-	// printing twice, so this is a no-op wherever one of the hooks above
-	// already handled the notice.
+	// For block themes this is the sole mechanism (see above); for classic
+	// themes it remains a safety net for header.php files that don't fire
+	// any of the classic WooCommerce content hooks. wp_body_open is called
+	// right after the opening <body> tag - WordPress core itself guarantees
+	// this for block themes (template-canvas.php), and it is standard
+	// practice in classic theme header.php files since WP 5.2. hmfw_wc_shop_disabled()
+	// already guards against printing twice, so this is a no-op wherever a
+	// classic hook already handled the notice.
 	add_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' );
 }
 

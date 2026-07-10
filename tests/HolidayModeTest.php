@@ -26,12 +26,13 @@ class HolidayModeTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		global $_test_theme_mods, $_test_options, $wp_filter, $hmfw_notice_already_printed, $_test_conditional_tags;
+		global $_test_theme_mods, $_test_options, $wp_filter, $hmfw_notice_already_printed, $_test_conditional_tags, $_test_is_block_theme;
 		$_test_theme_mods            = array();
 		$_test_options                = array();
 		$wp_filter                    = array();
 		$hmfw_notice_already_printed = false;
 		$_test_conditional_tags       = array();
+		$_test_is_block_theme         = false;
 	}
 
 	#[DataProvider( 'rangeProvider' )]
@@ -354,6 +355,35 @@ class HolidayModeTest extends TestCase {
 
 		\hmfw_woocommerce_holiday_mode();
 
+		$this->assertNotFalse( \has_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' ) );
+	}
+
+	/**
+	 * Regression test: on block themes (e.g. Twenty Twenty-Five), the entire
+	 * block template is rendered via get_the_block_template_html() before
+	 * wp_body_open() ever fires (see wp-includes/template-canvas.php), so the
+	 * classic content hooks would run - and claim the print-once guard - at
+	 * whatever position the corresponding block happens to occupy in the
+	 * template (e.g. below the archive title/result count on WooCommerce's
+	 * default Shop template), instead of at the very top of the page. Block
+	 * themes must therefore rely exclusively on wp_body_open.
+	 */
+	public function testWoocommerceHolidayModeSkipsClassicHooksOnBlockThemes(): void {
+		global $_test_is_block_theme;
+		$_test_is_block_theme = true;
+
+		$today = new \DateTime( 'today midnight', \wp_timezone() );
+
+		\update_option( 'hmfw_holiday_status', 'yes' );
+		\update_option( 'hmfw_holiday_startdate', ( clone $today )->modify( '-1 day' )->format( 'Y-m-d' ) );
+		\update_option( 'hmfw_holiday_enddate', ( clone $today )->modify( '+1 day' )->format( 'Y-m-d' ) );
+
+		\hmfw_woocommerce_holiday_mode();
+
+		$this->assertFalse( \has_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled' ) );
+		$this->assertFalse( \has_action( 'woocommerce_before_single_product', 'hmfw_wc_shop_disabled' ) );
+		$this->assertFalse( \has_action( 'woocommerce_before_cart', 'hmfw_wc_shop_disabled' ) );
+		$this->assertFalse( \has_action( 'woocommerce_before_checkout_form', 'hmfw_wc_shop_disabled' ) );
 		$this->assertNotFalse( \has_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' ) );
 	}
 
