@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
 Tested up to: 7.0
-Stable tag: 2.0.0
+Stable tag: 2.1.0
 Requires PHP: 8.4
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -47,7 +47,7 @@ screenshot-2.jpg
 == Changelog ==
 
 = 2.1.0 =
-* Fixed: Holiday mode now also removes the "Add to cart" / "Buy product" button for external/affiliate and grouped products, which was previously only handled for variable products.
+* Fixed: Holiday mode now also removes the "Add to cart" / "Buy product" button for external/affiliate and grouped products.
 
 = 2.0.0 =
 * Enhanced: Holiday mode now explicitly removes the "Add to cart" button for variable products.
