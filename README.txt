@@ -19,12 +19,12 @@ Define a start and end date for your closed period and automatically enable or d
 
 Features:
 
-Disable new orders by removing the add-to-cart button and displaying a custom message
-Disable the shopping cart (existing cart items will be removed when holiday mode is activated)
-Disable checkout during the holiday period
-Display a prominent custom absence message to inform customers about your temporary closure
-Schedule holiday mode with a specific start and end date
-Automatically deactivate holiday mode when the vacation period ends
+- **Disable new orders** by removing the add-to-cart button and displaying a custom message
+- **Disable the shopping cart** (existing cart items will be removed when holiday mode is activated)
+- **Disable checkout** during the holiday period
+- **Display a prominent custom absence message** to inform customers about your temporary closure
+- **Schedule holiday mode with a specific start and end date**
+- **Automatically deactivate holiday mode when the vacation period ends**
 
 WooCommerce® is a registered trademark of Automattic Inc.
 
