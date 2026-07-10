@@ -43,6 +43,7 @@ This plugin does not collect, process, or store any personal data.
 == Screenshots ==
 screenshot-1.jpg
 screenshot-2.jpg
+screenshot-3.jpg
 
 == Changelog ==
 
