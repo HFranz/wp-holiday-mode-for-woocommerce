@@ -218,6 +218,10 @@ function hmfw_woocommerce_holiday_mode(): void {
 	// Disable Cart, Checkout, Add Cart.
 	remove_action( 'woocommerce_proceed_to_checkout', 'woocommerce_button_proceed_to_checkout', 20 );
 	remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
+	// Variable products render their "Add to cart" button independently of
+	// woocommerce_is_purchasable (WooCommerce only hides/disables it client-side,
+	// per selected variation, via JS), so it must be removed explicitly here too.
+	remove_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button', 20 );
 
 	add_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled', 10 );
 	// Registered unconditionally (not guarded by is_product()): conditional

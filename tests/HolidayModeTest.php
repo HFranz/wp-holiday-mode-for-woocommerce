@@ -238,6 +238,28 @@ class HolidayModeTest extends TestCase {
 	}
 
 	/**
+	 * Regression test: for variable products, WooCommerce renders the
+	 * variations "Add to cart" button independently of the
+	 * woocommerce_is_purchasable filter (purchasability is only enforced
+	 * client-side, per selected variation), so it must be removed explicitly.
+	 */
+	public function testWoocommerceHolidayModeRemovesVariationAddToCartButton(): void {
+		$today = new \DateTime( 'today midnight', \wp_timezone() );
+
+		// Simulate WooCommerce core having registered its own add-to-cart
+		// button callback for variable products on this hook.
+		\add_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button', 20 );
+
+		\update_option( 'hmfw_holiday_status', 'yes' );
+		\update_option( 'hmfw_holiday_startdate', ( clone $today )->modify( '-1 day' )->format( 'Y-m-d' ) );
+		\update_option( 'hmfw_holiday_enddate', ( clone $today )->modify( '+1 day' )->format( 'Y-m-d' ) );
+
+		\hmfw_woocommerce_holiday_mode();
+
+		$this->assertFalse( \has_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button' ) );
+	}
+
+	/**
 	 * Regression test: is_product() (and other conditional tags) are not yet
 	 * reliable on 'init', since the main query has not run yet at that point.
 	 * The woocommerce_before_single_product fallback hook (added for classic

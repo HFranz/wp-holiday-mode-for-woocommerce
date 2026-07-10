@@ -187,8 +187,21 @@ if ( ! function_exists( 'add_action' ) ) {
  * Mock remove_action function
  */
 if ( ! function_exists( 'remove_action' ) ) {
-	function remove_action( $hook, $callback, $priority = 10, $accepted_args = 1 ): true {
-		return true;
+	function remove_action( $hook, $callback, $priority = 10 ): bool {
+		global $wp_filter;
+		if ( empty( $wp_filter[ $hook ] ) ) {
+			return false;
+		}
+
+		$found = false;
+		foreach ( $wp_filter[ $hook ] as $key => $action ) {
+			if ( $action['function'] === $callback && (int) $action['priority'] === (int) $priority ) {
+				unset( $wp_filter[ $hook ][ $key ] );
+				$found = true;
+			}
+		}
+
+		return $found;
 	}
 }
 
