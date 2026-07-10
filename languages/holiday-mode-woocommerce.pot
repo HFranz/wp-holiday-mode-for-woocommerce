@@ -2,48 +2,48 @@
 # This file is distributed under the GPL-2.0+.
 msgid ""
 msgstr ""
-"Project-Id-Version: Holiday Mode for WooCommerce 1.9.0\n"
+"Project-Id-Version: Holiday Mode for WooCommerce 1.9.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/holiday-mode-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-10T12:23:18+00:00\n"
+"POT-Creation-Date: 2026-07-10T13:53:48+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: holiday-mode-woocommerce\n"
 
 #. Plugin Name of the plugin
-#: holiday-mode-woocommerce.php
+#: holiday-mode-for-woocommerce.php
 msgid "Holiday Mode for WooCommerce"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: holiday-mode-woocommerce.php
+#: holiday-mode-for-woocommerce.php
 msgid "https://wordpress.org/plugins/holiday-mode-for-woocommerce/"
 msgstr ""
 
 #. Description of the plugin
-#: holiday-mode-woocommerce.php
+#: holiday-mode-for-woocommerce.php
 msgid "Set your WooCommerce® shop to holiday or vacation mode with ease."
 msgstr ""
 
 #. Author of the plugin
-#: holiday-mode-woocommerce.php
+#: holiday-mode-for-woocommerce.php
 msgid "Heinrich Franz"
 msgstr ""
 
 #. Author URI of the plugin
-#: holiday-mode-woocommerce.php
+#: holiday-mode-for-woocommerce.php
 msgid "https://sevmatic/?source=wordpress"
 msgstr ""
 
-#: holiday-mode-woocommerce.php:93
+#: holiday-mode-for-woocommerce.php:93
 msgid "Settings"
 msgstr ""
 
-#: holiday-mode-woocommerce.php:278
+#: holiday-mode-for-woocommerce.php:322
 msgid "<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active."
 msgstr ""
 

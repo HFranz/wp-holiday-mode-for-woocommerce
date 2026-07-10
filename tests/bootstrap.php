@@ -36,7 +36,7 @@ if ( file_exists( dirname( __DIR__ ) . '/vendor/autoload.php' ) ) {
 require_once __DIR__ . '/wordpress-mock.php';
 
 // Load the plugin's main file so all hmfw_* functions become available for testing.
-require_once dirname( __DIR__ ) . '/holiday-mode-woocommerce.php';
+require_once dirname( __DIR__ ) . '/holiday-mode-for-woocommerce.php';
 
 // Stub for the WooCommerce main class so hmfw_is_woocommerce_not_available()
 // can be tested for the "WooCommerce is active" branch as well.
