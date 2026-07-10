@@ -168,7 +168,7 @@ class HolidayModeTest extends TestCase {
 			array(
 				'action'  => 'update',
 				'type'    => 'plugin',
-				'plugins' => array( \plugin_basename( dirname( __DIR__ ) . '/holiday-mode-for-woocommerce.php' ) ),
+				'plugins' => array( \plugin_basename( dirname( __DIR__ ) . '/holiday-mode-woocommerce.php' ) ),
 			)
 		);
 

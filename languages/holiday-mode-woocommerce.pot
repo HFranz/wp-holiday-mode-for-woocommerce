@@ -15,35 +15,35 @@ msgstr ""
 "X-Domain: holiday-mode-woocommerce\n"
 
 #. Plugin Name of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "Holiday Mode for WooCommerce"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "https://wordpress.org/plugins/holiday-mode-for-woocommerce/"
 msgstr ""
 
 #. Description of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "Set your WooCommerce® shop to holiday or vacation mode with ease."
 msgstr ""
 
 #. Author of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "Heinrich Franz"
 msgstr ""
 
 #. Author URI of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "https://sevmatic/?source=wordpress"
 msgstr ""
 
-#: holiday-mode-for-woocommerce.php:93
+#: holiday-mode-woocommerce.php:93
 msgid "Settings"
 msgstr ""
 
-#: holiday-mode-for-woocommerce.php:322
+#: holiday-mode-woocommerce.php:322
 msgid "<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active."
 msgstr ""
 

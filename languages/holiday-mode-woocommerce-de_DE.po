@@ -18,35 +18,35 @@ msgstr ""
 "X-Generator: Poedit 3.9\n"
 
 #. Plugin Name of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "Holiday Mode for WooCommerce"
 msgstr "Urlaubsmodus für WooCommerce"
 
 #. Plugin URI of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "https://wordpress.org/plugins/holiday-mode-for-woocommerce/"
 msgstr ""
 
 #. Description of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "Set your WooCommerce® shop to holiday or vacation mode with ease."
 msgstr "Stelle deinen WooCommerce®-Shop ganz einfach auf Urlaubsmodus um."
 
 #. Author of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "Heinrich Franz"
 msgstr ""
 
 #. Author URI of the plugin
-#: holiday-mode-for-woocommerce.php
+#: holiday-mode-woocommerce.php
 msgid "https://sevmatic/?source=wordpress"
 msgstr ""
 
-#: holiday-mode-for-woocommerce.php:93
+#: holiday-mode-woocommerce.php:93
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: holiday-mode-for-woocommerce.php:278
+#: holiday-mode-woocommerce.php:278
 msgid ""
 "<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be "
 "installed and active."
