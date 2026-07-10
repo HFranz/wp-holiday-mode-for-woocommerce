@@ -41,6 +41,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'HMFW_VERSION', '1.8.3' );
 
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-hmfw-cache-flusher.php';
+
 add_action( 'init', 'hmfw_load_textdomain' );
 /**
  * Load the plugin's translations.
@@ -191,6 +193,13 @@ add_action( 'init', 'hmfw_woocommerce_holiday_mode', 10 );
 /**
  * Activate Holiday Mode: disable purchasing and show the holiday notice
  * when the shop is within the configured date range.
+ *
+ * Also marks the current request as non-cacheable via the DONOTCACHEPAGE
+ * constant, which W3 Total Cache and other cache plugins (WP Super Cache,
+ * WP Rocket, LiteSpeed Cache, ...) respect. Holiday Mode is time controlled,
+ * so instead of flushing the cache we simply never cache pages while it is
+ * actually active - every request then evaluates the current date
+ * correctly, without ever serving stale cached output.
  */
 function hmfw_woocommerce_holiday_mode(): void {
 	if ( hmfw_is_woocommerce_not_available() || 'yes' !== get_option( 'hmfw_holiday_status', 'no' ) ) {
@@ -199,6 +208,10 @@ function hmfw_woocommerce_holiday_mode(): void {
 
 	if ( ! hmfw_check_in_range( get_option( 'hmfw_holiday_startdate' ), get_option( 'hmfw_holiday_enddate' ) ) ) {
 		return;
+	}
+
+	if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+		define( 'DONOTCACHEPAGE', true );
 	}
 
 	add_filter( 'woocommerce_is_purchasable', '__return_false' );
@@ -265,6 +278,25 @@ function hmfw_wc_missing_notice(): void {
 			__( '<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active.', 'holiday-mode-woocommerce' )
 		)
 	);
+}
+
+add_action( 'woocommerce_settings_saved', 'hmfw_maybe_flush_cache_on_settings_save' );
+/**
+ * Flush the page cache once when the Holiday Mode settings are saved, so any
+ * page that was already cached before Holiday Mode got (de)activated is
+ * refreshed immediately. Ongoing date-range transitions no longer need a
+ * flush, since hmfw_woocommerce_holiday_mode() sets DONOTCACHEPAGE and keeps
+ * the affected pages out of the cache entirely while Holiday Mode is active.
+ *
+ * The actual flushing logic lives in HMFW_Cache_Flusher, see
+ * includes/class-hmfw-cache-flusher.php.
+ */
+function hmfw_maybe_flush_cache_on_settings_save(): void {
+	if ( ! isset( $_GET['tab'] ) || 'holiday_mode' !== sanitize_key( wp_unslash( $_GET['tab'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		return;
+	}
+
+	HMFW_Cache_Flusher::flush();
 }
 
 /**

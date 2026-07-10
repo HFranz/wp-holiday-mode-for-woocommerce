@@ -459,6 +459,15 @@ if ( ! function_exists( 'sanitize_text_field' ) ) {
 }
 
 /**
+ * Mock sanitize_key function
+ */
+if ( ! function_exists( 'sanitize_key' ) ) {
+	function sanitize_key( $key ): string {
+		return strtolower( preg_replace( '/[^a-z0-9_\-]/', '', (string) $key ) );
+	}
+}
+
+/**
  * Mock absint function
  */
 if ( ! function_exists( 'absint' ) ) {
@@ -565,6 +574,26 @@ if ( ! function_exists( 'network_home_url' ) ) {
 			$base_url = preg_replace( '/^http:/', 'https:', $base_url );
 		}
 		return rtrim( $base_url, '/' ) . '/' . ltrim( $path, '/' );
+	}
+}
+
+/**
+ * Mock do_action function
+ */
+if ( ! function_exists( 'do_action' ) ) {
+	function do_action( string $tag, ...$args ): void {
+		global $wp_filter;
+		if ( empty( $wp_filter[ $tag ] ) ) {
+			return;
+		}
+
+		$callbacks = $wp_filter[ $tag ];
+		usort( $callbacks, fn( $a, $b ) => $a['priority'] <=> $b['priority'] );
+
+		foreach ( $callbacks as $callback ) {
+			$accepted_args = max( (int) ( $callback['accepted_args'] ?? 1 ), 1 );
+			call_user_func_array( $callback['function'], array_slice( $args, 0, $accepted_args ) );
+		}
 	}
 }
 
@@ -1039,3 +1068,17 @@ if ( ! function_exists( 'is_product' ) ) {
 		return false;
 	}
 }
+
+/**
+ * Mock wp_cache_flush function. Counts calls in $_test_wp_cache_flush_count
+ * so tests can assert HMFW_Cache_Flusher::flush() actually flushed the
+ * WordPress core object cache.
+ */
+if ( ! function_exists( 'wp_cache_flush' ) ) {
+	function wp_cache_flush(): bool {
+		global $_test_wp_cache_flush_count;
+		$_test_wp_cache_flush_count = ( $_test_wp_cache_flush_count ?? 0 ) + 1;
+		return true;
+	}
+}
+
