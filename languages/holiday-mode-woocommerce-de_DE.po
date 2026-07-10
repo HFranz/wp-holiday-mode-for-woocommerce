@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: WPML_EXPORT_holiday-mode-woocommerce\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/holiday-mode-for-"
 "woocommerce\n"
-"POT-Creation-Date: 2026-07-09T23:40:13+00:00\n"
+"POT-Creation-Date: 2026-07-10T12:23:18+00:00\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -42,11 +42,11 @@ msgstr ""
 msgid "https://sevmatic/?source=wordpress"
 msgstr ""
 
-#: holiday-mode-woocommerce.php:91
+#: holiday-mode-woocommerce.php:93
 msgid "Settings"
 msgstr "Einstellungen"
 
-#: holiday-mode-woocommerce.php:265
+#: holiday-mode-woocommerce.php:278
 msgid ""
 "<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be "
 "installed and active."
@@ -93,27 +93,27 @@ msgid "Enter first day of Holidays here."
 msgstr "Trage hier den ersten Tag des Urlaubs ein."
 
 # wpml-name: 3c85a4035d1cb428e0a6b6c549ff8d98
-#: includes/class-hmfw-settings.php:59
+#: includes/class-hmfw-settings.php:58
 msgid "End of Holidays"
 msgstr "Urlaubsende"
 
 # wpml-name: d558df7a794c9cbc4701d2427f7117ba
-#: includes/class-hmfw-settings.php:60
+#: includes/class-hmfw-settings.php:59
 msgid "Enter last day of Holidays here."
 msgstr "Trage hier den letzten Tag des Urlaubs ein."
 
 # wpml-name: fcc7c51d41b07966c3e9192b7320a35b
-#: includes/class-hmfw-settings.php:66
+#: includes/class-hmfw-settings.php:64
 msgid "Vacation message"
 msgstr "Urlaubsnachricht"
 
 # wpml-name: c9027a8f560165196ebefb8b92cc6564
-#: includes/class-hmfw-settings.php:67
+#: includes/class-hmfw-settings.php:65
 msgid "Enter your Holiday message here."
 msgstr "Trage hier die Urlaubsnachricht ein."
 
 # wpml-name: af784c5a6ae594d7dcd99f8da301bd5a
-#: includes/class-hmfw-settings.php:71
+#: includes/class-hmfw-settings.php:69
 msgid "I am on vacation."
 msgstr "Ich bin im Urlaub."
 
