@@ -25,10 +25,12 @@ class HolidayModeTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		global $_test_theme_mods, $_test_options, $wp_filter;
-		$_test_theme_mods = array();
-		$_test_options    = array();
-		$wp_filter        = array();
+		global $_test_theme_mods, $_test_options, $wp_filter, $hmfw_notice_already_printed, $_test_conditional_tags;
+		$_test_theme_mods            = array();
+		$_test_options                = array();
+		$wp_filter                    = array();
+		$hmfw_notice_already_printed = false;
+		$_test_conditional_tags       = array();
 	}
 
 	#[DataProvider( 'rangeProvider' )]
@@ -232,6 +234,98 @@ class HolidayModeTest extends TestCase {
 		$this->assertNotFalse( \has_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled' ) );
 		$this->assertNotFalse( \has_action( 'woocommerce_before_cart', 'hmfw_wc_shop_disabled' ) );
 		$this->assertNotFalse( \has_action( 'woocommerce_before_checkout_form', 'hmfw_wc_shop_disabled' ) );
+	}
+
+	/**
+	 * Regression test: is_product() (and other conditional tags) are not yet
+	 * reliable on 'init', since the main query has not run yet at that point.
+	 * The woocommerce_before_single_product fallback hook (added for classic
+	 * themes that don't call woocommerce_before_main_content on the single
+	 * product page) must therefore be registered unconditionally.
+	 */
+	public function testWoocommerceHolidayModeAlwaysRegistersSingleProductFallback(): void {
+		$today = new \DateTime( 'today midnight', \wp_timezone() );
+
+		\update_option( 'hmfw_holiday_status', 'yes' );
+		\update_option( 'hmfw_holiday_startdate', ( clone $today )->modify( '-1 day' )->format( 'Y-m-d' ) );
+		\update_option( 'hmfw_holiday_enddate', ( clone $today )->modify( '+1 day' )->format( 'Y-m-d' ) );
+
+		\hmfw_woocommerce_holiday_mode();
+
+		$this->assertNotFalse( \has_action( 'woocommerce_before_single_product', 'hmfw_wc_shop_disabled' ) );
+	}
+
+	/**
+	 * Regression test: on the single product page, both
+	 * woocommerce_before_main_content and woocommerce_before_single_product
+	 * fire during the same page load, since the latter is nested inside the
+	 * former. hmfw_wc_shop_disabled() must therefore only print the notice
+	 * once per request, even when called multiple times.
+	 */
+	public function testShopDisabledOnlyPrintsOncePerRequest(): void {
+		\update_option( 'hmfw_holiday_message', 'We are on vacation.' );
+
+		ob_start();
+		\hmfw_wc_shop_disabled();
+		\hmfw_wc_shop_disabled();
+		$output = ob_get_clean();
+
+		$this->assertSame( 1, substr_count( $output, 'We are on vacation.' ) );
+	}
+
+	/**
+	 * Regression test: block themes whose /shop template was customized in
+	 * the Site Editor to use native blocks instead of the "Legacy Template"
+	 * block never fire woocommerce_before_main_content, so the wp_body_open
+	 * fallback must register and print the notice on its own.
+	 */
+	public function testWoocommerceHolidayModeRegistersWpBodyOpenFallback(): void {
+		$today = new \DateTime( 'today midnight', \wp_timezone() );
+
+		\update_option( 'hmfw_holiday_status', 'yes' );
+		\update_option( 'hmfw_holiday_startdate', ( clone $today )->modify( '-1 day' )->format( 'Y-m-d' ) );
+		\update_option( 'hmfw_holiday_enddate', ( clone $today )->modify( '+1 day' )->format( 'Y-m-d' ) );
+
+		\hmfw_woocommerce_holiday_mode();
+
+		$this->assertNotFalse( \has_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' ) );
+	}
+
+	/**
+	 * @param array<string, bool> $conditional_tags
+	 */
+	#[DataProvider( 'shopFooterFallbackPageProvider' )]
+	public function testFooterFallbackPrintsNoticeOnRelevantPages( array $conditional_tags ): void {
+		global $_test_conditional_tags;
+		$_test_conditional_tags = $conditional_tags;
+
+		\update_option( 'hmfw_holiday_message', 'We are on vacation.' );
+
+		ob_start();
+		\hmfw_wc_shop_disabled_body_open_fallback();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'We are on vacation.', $output );
+	}
+
+	public static function shopFooterFallbackPageProvider(): array {
+		return array(
+			'shop archive'     => array( array( 'is_shop' => true ) ),
+			'product taxonomy' => array( array( 'is_product_taxonomy' => true ) ),
+			'single product'   => array( array( 'is_product' => true ) ),
+			'cart'             => array( array( 'is_cart' => true ) ),
+			'checkout'         => array( array( 'is_checkout' => true ) ),
+		);
+	}
+
+	public function testFooterFallbackDoesNothingOnUnrelatedPages(): void {
+		\update_option( 'hmfw_holiday_message', 'We are on vacation.' );
+
+		ob_start();
+		\hmfw_wc_shop_disabled_body_open_fallback();
+		$output = ob_get_clean();
+
+		$this->assertSame( '', $output );
 	}
 
 	public function testPluginActionLinksAddsSettingsLink(): void {

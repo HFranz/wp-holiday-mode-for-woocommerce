@@ -220,17 +220,59 @@ function hmfw_woocommerce_holiday_mode(): void {
 	remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
 
 	add_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled', 10 );
-	if ( is_product() ) {
-		add_action( 'woocommerce_before_single_product', 'hmfw_wc_shop_disabled', 10 );
-	}
+	// Registered unconditionally (not guarded by is_product()): conditional
+	// tags are not yet reliable on 'init', since the main query has not run
+	// yet at this point. This hook only ever fires on single product pages
+	// anyway, so the guard was both redundant and broken.
+	add_action( 'woocommerce_before_single_product', 'hmfw_wc_shop_disabled', 10 );
 	add_action( 'woocommerce_before_cart', 'hmfw_wc_shop_disabled', 10 );
 	add_action( 'woocommerce_before_checkout_form', 'hmfw_wc_shop_disabled', 10 );
+
+	// Fallback for block themes: when a WooCommerce archive/cart/checkout
+	// template has been customized in the Site Editor to use native blocks
+	// (e.g. "Product Collection") instead of the "Legacy Template" block,
+	// none of the classic action hooks above ever fire, so the notice would
+	// silently disappear (most commonly noticed on /shop). wp_body_open is
+	// called right after the opening <body> tag - WordPress core itself
+	// guarantees this for block themes (template-canvas.php), and it is
+	// standard practice in classic theme header.php files since WP 5.2 - so
+	// it reliably catches those cases while still keeping the notice near
+	// the top of the page. hmfw_wc_shop_disabled() already guards against
+	// printing twice, so this is a no-op wherever one of the hooks above
+	// already handled the notice.
+	add_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' );
+}
+
+/**
+ * Print the holiday notice right after the opening <body> tag, but only on
+ * the pages Holiday Mode actually affects. Acts as a safety net for block
+ * themes whose templates don't fire the classic WooCommerce content hooks
+ * (see registration above).
+ */
+function hmfw_wc_shop_disabled_body_open_fallback(): void {
+	if ( ! is_shop() && ! is_product_taxonomy() && ! is_product() && ! is_cart() && ! is_checkout() ) {
+		return;
+	}
+
+	hmfw_wc_shop_disabled();
 }
 
 /**
  * Print the holiday notice on the shop, single product, cart and checkout pages.
+ *
+ * Guarded against printing more than once per request: on the single product
+ * page, both woocommerce_before_main_content and woocommerce_before_single_product
+ * fire for the same page load (the latter is nested inside the former), and
+ * this function is hooked into both for theme-compatibility reasons - so
+ * without this guard the notice would be duplicated.
  */
 function hmfw_wc_shop_disabled(): void {
+	global $hmfw_notice_already_printed;
+
+	if ( ! empty( $hmfw_notice_already_printed ) ) {
+		return;
+	}
+
 	$notice = get_option( 'hmfw_holiday_message' );
 
 	if ( '' === $notice ) {
@@ -238,6 +280,8 @@ function hmfw_wc_shop_disabled(): void {
 	}
 
 	wc_print_notice( wp_kses_post( $notice ), 'error' );
+
+	$hmfw_notice_already_printed = true;
 }
 
 /**

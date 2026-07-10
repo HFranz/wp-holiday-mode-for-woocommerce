@@ -1065,9 +1065,44 @@ if ( ! function_exists( 'wc_print_notice' ) ) {
  */
 if ( ! function_exists( 'is_product' ) ) {
 	function is_product(): bool {
-		return false;
+		global $_test_conditional_tags;
+		return ! empty( $_test_conditional_tags['is_product'] );
 	}
 }
+
+/**
+ * Mock WooCommerce conditional tag functions used by the block-theme
+ * wp_footer fallback. Controllable via the global $_test_conditional_tags
+ * array so tests can simulate being on a given page type.
+ */
+if ( ! function_exists( 'is_shop' ) ) {
+	function is_shop(): bool {
+		global $_test_conditional_tags;
+		return ! empty( $_test_conditional_tags['is_shop'] );
+	}
+}
+
+if ( ! function_exists( 'is_product_taxonomy' ) ) {
+	function is_product_taxonomy(): bool {
+		global $_test_conditional_tags;
+		return ! empty( $_test_conditional_tags['is_product_taxonomy'] );
+	}
+}
+
+if ( ! function_exists( 'is_cart' ) ) {
+	function is_cart(): bool {
+		global $_test_conditional_tags;
+		return ! empty( $_test_conditional_tags['is_cart'] );
+	}
+}
+
+if ( ! function_exists( 'is_checkout' ) ) {
+	function is_checkout(): bool {
+		global $_test_conditional_tags;
+		return ! empty( $_test_conditional_tags['is_checkout'] );
+	}
+}
+
 
 /**
  * Mock wp_cache_flush function. Counts calls in $_test_wp_cache_flush_count
