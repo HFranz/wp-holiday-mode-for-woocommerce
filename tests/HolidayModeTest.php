@@ -10,6 +10,7 @@ namespace Hfranz\WpHolidayModeForWoocommerce\Tests;
 use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use WP_Upgrader;
 
 #[CoversFunction( 'hmfw_check_in_range' )]
 #[CoversFunction( 'hmfw_is_woocommerce_not_available' )]
@@ -163,7 +164,7 @@ class HolidayModeTest extends TestCase {
 		\set_theme_mod( 'hmfw_holiday-status', true );
 
 		\hmfw_migrate_after_plugin_update(
-			new \stdClass(),
+			new WP_Upgrader(),
 			array(
 				'action'  => 'update',
 				'type'    => 'plugin',
@@ -178,7 +179,7 @@ class HolidayModeTest extends TestCase {
 		\set_theme_mod( 'hmfw_holiday-status', true );
 
 		\hmfw_migrate_after_plugin_update(
-			new \stdClass(),
+			new WP_Upgrader(),
 			array(
 				'action'  => 'update',
 				'type'    => 'plugin',
@@ -193,7 +194,7 @@ class HolidayModeTest extends TestCase {
 		\set_theme_mod( 'hmfw_holiday-status', true );
 
 		\hmfw_migrate_after_plugin_update(
-			new \stdClass(),
+			new WP_Upgrader(),
 			array(
 				'action' => 'update',
 				'type'   => 'theme',

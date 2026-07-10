@@ -124,7 +124,7 @@ add_action( 'upgrader_process_complete', 'hmfw_migrate_after_plugin_update', 10,
  * instead of waiting for the 'init' fallback below.
  *
  * @param WP_Upgrader $upgrader_object Upgrader instance (unused).
- * @param array $options         Details about the bulk/single update that just completed.
+ * @param array        $options         Details about the bulk/single update that just completed.
  */
 function hmfw_migrate_after_plugin_update( WP_Upgrader $upgrader_object, array $options ): void {
 	if ( 'update' !== ( $options['action'] ?? '' ) || 'plugin' !== ( $options['type'] ?? '' ) ) {
@@ -162,21 +162,21 @@ function hmfw_migrate_customizer_settings(): void {
 	}
 
 	$map = array(
-		'hmfw_holiday-status'    => array( 'hmfw_holiday_status', 'bool_to_yesno' ),
-		'hmfw_holiday-startdate' => array( 'hmfw_holiday_startdate', 'raw' ),
-		'hmfw_holiday-enddate'   => array( 'hmfw_holiday_enddate', 'raw' ),
-		'hmfw_holiday-message'   => array( 'hmfw_holiday_message', 'raw' ),
+		'hmfw_holiday-status'    => 'hmfw_holiday_status',
+		'hmfw_holiday-startdate' => 'hmfw_holiday_startdate',
+		'hmfw_holiday-enddate'   => 'hmfw_holiday_enddate',
+		'hmfw_holiday-message'   => 'hmfw_holiday_message',
 	);
 
-	foreach ( $map as $theme_mod => $mapping ) {
-		list( $option, $type ) = $mapping;
-		$value                 = get_theme_mod( $theme_mod, null );
+	foreach ( $map as $theme_mod => $option ) {
+		$value = get_theme_mod( $theme_mod, null );
 
 		if ( null === $value || '' === $value ) {
 			continue;
 		}
 
-		if ( 'bool_to_yesno' === $type ) {
+		// The status theme mod stored a boolean; the option expects 'yes'/'no'.
+		if ( 'hmfw_holiday-status' === $theme_mod ) {
 			$value = $value ? 'yes' : 'no';
 		}
 

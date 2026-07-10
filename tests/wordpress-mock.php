@@ -619,6 +619,15 @@ if ( ! function_exists( 'has_action' ) ) {
 }
 
 /**
+ * Mock WP_Upgrader class, just enough of a stand-in so code that type-hints
+ * against it (e.g. 'upgrader_process_complete' callbacks) can be unit tested.
+ */
+if ( ! class_exists( 'WP_Upgrader' ) ) {
+	class WP_Upgrader {
+	}
+}
+
+/**
  * Mock WP_Role class
  */
 if ( ! class_exists( 'WP_Role' ) ) {
