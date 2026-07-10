@@ -46,6 +46,9 @@ screenshot-2.jpg
 
 == Changelog ==
 
+= 2.1.0 =
+* Fixed: Holiday mode now also removes the "Add to cart" / "Buy product" button for external/affiliate and grouped products, which was previously only handled for variable products.
+
 = 2.0.0 =
 * Enhanced: Holiday mode now explicitly removes the "Add to cart" button for variable products.
 
