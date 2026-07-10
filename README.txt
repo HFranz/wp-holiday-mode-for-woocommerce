@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
 Tested up to: 7.0
-Stable tag: 1.9.3
+Stable tag: 2.0.0
 Requires PHP: 8.4
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -45,6 +45,9 @@ screenshot-1.jpg
 screenshot-2.jpg
 
 == Changelog ==
+
+= 2.0.0 =
+* Enhanced: Holiday mode now explicitly removes the "Add to cart" button for variable products.
 
 = 1.9.3 =
 * Fixed: Plugin was incorrectly deactivated after upgrading from a previous active version.
