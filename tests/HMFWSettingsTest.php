@@ -112,8 +112,7 @@ class HMFWSettingsTest extends TestCase {
 
 		foreach ( $settings as $field ) {
 			if ( in_array( $field['id'] ?? '', $date_field_ids, true ) ) {
-				$this->assertSame( 'date', $field['custom_attributes']['type'] );
-				$this->assertSame( 'text', $field['type'] );
+				$this->assertSame( 'date', $field['type'] );
 			}
 		}
 	}
