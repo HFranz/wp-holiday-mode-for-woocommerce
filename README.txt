@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
 Tested up to: 7.0
-Stable tag: 1.9.0
+Stable tag: 1.9.1
 Requires PHP: 8.4
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -45,6 +45,10 @@ screenshot-1.jpg
 screenshot-2.jpg
 
 == Changelog ==
+
+= 1.9.1 =
+* Fixed: Holiday notice was not displayed on single product pages in some classic themes.
+* Fixed: Holiday notice was missing on shop, archive, cart, and checkout pages in some block theme setups. The notice is now displayed correctly in these cases.
 
 = 1.9.0 =
 * Improved compatibility with caching plugins.
