@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
 Tested up to: 7.0
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 Requires PHP: 8.4
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -45,6 +45,10 @@ screenshot-1.jpg
 screenshot-2.jpg
 
 == Changelog ==
+
+= 1.9.2 =
+* Security: Added improved escaping for holiday notice messages to strengthen protection against XSS vulnerabilities.
+* Maintenance: Refactored internal code and cleaned up various areas of the plugin.
 
 = 1.9.1 =
 * Fixed: Holiday notice was not displayed on single product pages in some classic themes.
