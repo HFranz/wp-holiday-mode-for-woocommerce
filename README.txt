@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
 Tested up to: 7.0
-Stable tag: 2.1.0
+Stable tag: 2.2.0
 Requires PHP: 8.4
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -45,6 +45,9 @@ screenshot-1.jpg
 screenshot-2.jpg
 
 == Changelog ==
+
+= 2.2.0 =
+* Fixed: Holiday notice could appear below the archive title/result count instead of at the very top of the page on block themes (e.g. Twenty Twenty-Five) using WooCommerce's default block-based Shop template.
 
 = 2.1.0 =
 * Fixed: Holiday mode now also removes the "Add to cart" / "Buy product" button for external/affiliate and grouped products.
