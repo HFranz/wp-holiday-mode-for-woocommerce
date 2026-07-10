@@ -9,7 +9,7 @@ Donate link: https://sevmatic.com/
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Set your WooCommerce® shop to holiday or vacation mode with ease. Schedule temporary shop closures using a flexible date range and keep your customers informed while you are away.
+Set your WooCommerce® shop to holiday mode. Schedule closures and keep customers informed automatically.
 
 == Description ==
 
