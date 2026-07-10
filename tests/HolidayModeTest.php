@@ -260,6 +260,49 @@ class HolidayModeTest extends TestCase {
 	}
 
 	/**
+	 * Regression test: for external/affiliate products, WooCommerce renders
+	 * the "Buy product" button as soon as an add-to-cart URL is set,
+	 * independently of the woocommerce_is_purchasable filter, so it must be
+	 * removed explicitly.
+	 */
+	public function testWoocommerceHolidayModeRemovesExternalAddToCartButton(): void {
+		$today = new \DateTime( 'today midnight', \wp_timezone() );
+
+		// Simulate WooCommerce core having registered its own add-to-cart
+		// button callback for external/affiliate products on this hook.
+		\add_action( 'woocommerce_external_add_to_cart', 'woocommerce_external_add_to_cart', 30 );
+
+		\update_option( 'hmfw_holiday_status', 'yes' );
+		\update_option( 'hmfw_holiday_startdate', ( clone $today )->modify( '-1 day' )->format( 'Y-m-d' ) );
+		\update_option( 'hmfw_holiday_enddate', ( clone $today )->modify( '+1 day' )->format( 'Y-m-d' ) );
+
+		\hmfw_woocommerce_holiday_mode();
+
+		$this->assertFalse( \has_action( 'woocommerce_external_add_to_cart', 'woocommerce_external_add_to_cart' ) );
+	}
+
+	/**
+	 * Regression test: grouped products list each child product's own
+	 * add-to-cart control the same way, independently of the
+	 * woocommerce_is_purchasable filter, so it must be removed explicitly.
+	 */
+	public function testWoocommerceHolidayModeRemovesGroupedAddToCartButton(): void {
+		$today = new \DateTime( 'today midnight', \wp_timezone() );
+
+		// Simulate WooCommerce core having registered its own add-to-cart
+		// button callback for grouped products on this hook.
+		\add_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
+
+		\update_option( 'hmfw_holiday_status', 'yes' );
+		\update_option( 'hmfw_holiday_startdate', ( clone $today )->modify( '-1 day' )->format( 'Y-m-d' ) );
+		\update_option( 'hmfw_holiday_enddate', ( clone $today )->modify( '+1 day' )->format( 'Y-m-d' ) );
+
+		\hmfw_woocommerce_holiday_mode();
+
+		$this->assertFalse( \has_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart' ) );
+	}
+
+	/**
 	 * Regression test: is_product() (and other conditional tags) are not yet
 	 * reliable on 'init', since the main query has not run yet at that point.
 	 * The woocommerce_before_single_product fallback hook (added for classic

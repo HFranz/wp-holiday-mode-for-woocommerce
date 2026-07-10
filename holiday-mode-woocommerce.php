@@ -222,6 +222,13 @@ function hmfw_woocommerce_holiday_mode(): void {
 	// woocommerce_is_purchasable (WooCommerce only hides/disables it client-side,
 	// per selected variation, via JS), so it must be removed explicitly here too.
 	remove_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button', 20 );
+	// External/affiliate products render their "Buy product" button as soon as
+	// an add-to-cart URL is set, regardless of woocommerce_is_purchasable, so it
+	// must be removed explicitly here too, same as for variable products above.
+	remove_action( 'woocommerce_external_add_to_cart', 'woocommerce_external_add_to_cart', 30 );
+	// Grouped products list each child's own add-to-cart control the same way,
+	// independently of woocommerce_is_purchasable.
+	remove_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
 
 	add_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled', 10 );
 	// Registered unconditionally (not guarded by is_product()): conditional
