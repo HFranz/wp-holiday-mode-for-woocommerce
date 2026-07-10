@@ -123,10 +123,10 @@ add_action( 'upgrader_process_complete', 'hmfw_migrate_after_plugin_update', 10,
  * Trigger the Customizer migration right after this plugin was updated,
  * instead of waiting for the 'init' fallback below.
  *
- * @param \WP_Upgrader $upgrader_object Upgrader instance (unused).
- * @param array        $options         Details about the bulk/single update that just completed.
+ * @param WP_Upgrader $upgrader_object Upgrader instance (unused).
+ * @param array $options         Details about the bulk/single update that just completed.
  */
-function hmfw_migrate_after_plugin_update( $upgrader_object, $options ): void {
+function hmfw_migrate_after_plugin_update( WP_Upgrader $upgrader_object, array $options ): void {
 	if ( 'update' !== ( $options['action'] ?? '' ) || 'plugin' !== ( $options['type'] ?? '' ) ) {
 		return;
 	}
@@ -289,9 +289,10 @@ function hmfw_wc_shop_disabled(): void {
  *
  * @param string $start_date Start date, parseable by DateTime.
  * @param string $end_date   End date, parseable by DateTime.
+ *
  * @return bool True if today falls within [start_date, end_date].
  */
-function hmfw_check_in_range( $start_date, $end_date ): bool {
+function hmfw_check_in_range( string $start_date, string $end_date ): bool {
 	try {
 		$timezone = wp_timezone();
 		$start    = new DateTime( $start_date, $timezone );
