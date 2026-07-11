@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
 Tested up to: 7.0
-Stable tag: 2.2.0
+Stable tag: 2.3.0
 Requires PHP: 8.3
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -46,6 +46,9 @@ screenshot-2.jpg
 screenshot-3.jpg
 
 == Changelog ==
+
+= 2.3.0 =
+* Lower minimum required PHP version to 8.3 to allow installation on WordPress 6.7 and higher.
 
 = 2.2.0 =
 * Fixed: Holiday notice could appear below the archive title/result count instead of at the very top of the page on block themes (e.g. Twenty Twenty-Five) using WooCommerce's default block-based Shop template.
