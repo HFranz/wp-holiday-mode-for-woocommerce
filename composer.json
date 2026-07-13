@@ -20,7 +20,7 @@
         }
     ],
     "scripts": {
-        "make-pot": "wp i18n make-pot . languages/holiday-mode-woocommerce.pot --exclude=node_modules",
+        "make-pot": "wp i18n make-pot . languages/holiday-mode-woocommerce.pot --exclude=node_modules,vendor",
         "update-po": "wp i18n update-po languages/holiday-mode-woocommerce.pot languages/",
         "make-php": "wp i18n make-php languages/",
         "lint:php": "phpcs -p",
