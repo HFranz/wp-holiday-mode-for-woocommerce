@@ -1047,6 +1047,19 @@ if ( ! function_exists( 'wp_kses_post' ) ) {
 }
 
 /**
+ * Mock wp_strip_all_tags function
+ */
+if ( ! function_exists( 'wp_strip_all_tags' ) ) {
+	function wp_strip_all_tags( $string, $remove_breaks = false ): string {
+		$string = strip_tags( $string );
+		if ( $remove_breaks ) {
+			$string = preg_replace( '/[\r\n\t ]+/', ' ', $string );
+		}
+		return trim( $string );
+	}
+}
+
+/**
  * Mock theme mod storage & functions
  */
 global $_test_theme_mods;

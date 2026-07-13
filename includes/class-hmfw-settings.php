@@ -87,6 +87,80 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 		}
 
 		/**
+		 * Persist submitted settings, but refuse to activate Holiday Mode
+		 * while its date range or vacation message is empty/invalid.
+		 */
+		public function save(): void {
+			$this->validate_activation_fields();
+
+			parent::save();
+		}
+
+		/**
+		 * Validate the Holiday Mode date range and vacation message whenever
+		 * the merchant tries to (re-)activate Holiday Mode. Shows admin
+		 * errors and forces the status back to "no" if anything is missing
+		 * or invalid, so Holiday Mode never goes live in a broken state.
+		 */
+		private function validate_activation_fields(): void {
+			if ( ! isset( $_POST['hmfw_holiday_status'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				return;
+			}
+
+			$errors = array();
+
+			$start = isset( $_POST['hmfw_holiday_startdate'] ) ? sanitize_text_field( wp_unslash( $_POST['hmfw_holiday_startdate'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+			$end   = isset( $_POST['hmfw_holiday_enddate'] ) ? sanitize_text_field( wp_unslash( $_POST['hmfw_holiday_enddate'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+			if ( ! $this->is_valid_date( $start ) ) {
+				$errors[] = __( 'Please enter a valid start date to activate Holiday Mode.', 'holiday-mode-woocommerce' );
+			}
+
+			if ( ! $this->is_valid_date( $end ) ) {
+				$errors[] = __( 'Please enter a valid end date to activate Holiday Mode.', 'holiday-mode-woocommerce' );
+			} elseif ( $this->is_valid_date( $start ) && strtotime( $end ) < strtotime( $start ) ) {
+				$errors[] = __( 'The end date of Holiday Mode must not be before the start date.', 'holiday-mode-woocommerce' );
+			}
+
+			$message = isset( $_POST['hmfw_holiday_message'] ) ? wp_kses_post( wp_unslash( $_POST['hmfw_holiday_message'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+
+			if ( '' === trim( wp_strip_all_tags( $message ) ) ) {
+				$errors[] = __( 'Please enter a vacation message to activate Holiday Mode.', 'holiday-mode-woocommerce' );
+			}
+
+			if ( empty( $errors ) ) {
+				return;
+			}
+
+			foreach ( $errors as $error ) {
+				WC_Admin_Settings::add_error( $error );
+			}
+
+			// Keep Holiday Mode disabled while its configuration is invalid.
+			unset( $_POST['hmfw_holiday_status'] );
+		}
+
+		/**
+		 * Check whether a given date string is non-empty and represents a real date.
+		 *
+		 * @param string $date Date string to validate.
+		 * @return bool True if the string is a non-empty, parseable date.
+		 */
+		private function is_valid_date( string $date ): bool {
+			if ( '' === $date ) {
+				return false;
+			}
+
+			try {
+				new DateTime( $date, wp_timezone() );
+			} catch ( Exception $e ) {
+				return false;
+			}
+
+			return false !== strtotime( $date );
+		}
+
+		/**
 		 * Output a rating request notice below the Save button.
 		 */
 		public function output_rating_notice(): void {

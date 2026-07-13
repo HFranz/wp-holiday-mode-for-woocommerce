@@ -85,7 +85,17 @@ if ( ! class_exists( 'WC_Settings_Page' ) ) {
  */
 if ( ! class_exists( 'WC_Admin_Settings' ) ) {
 	class WC_Admin_Settings {
+		public static array $errors = array();
+
 		public static function output_fields( $settings ) {}
 		public static function save_fields( $settings ) {}
+
+		public static function add_error( $error ) {
+			self::$errors[] = $error;
+		}
+
+		public static function get_errors() {
+			return self::$errors;
+		}
 	}
 }

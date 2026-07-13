@@ -10,6 +10,7 @@ namespace Hfranz\WpHolidayModeForWoocommerce\Tests;
 use HMFW_Settings;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use WC_Admin_Settings;
 use function add_filter;
 use function apply_filters;
 use function do_action;
@@ -29,6 +30,9 @@ class HMFWSettingsTest extends TestCase {
 
 		global $wp_filter;
 		$wp_filter = array();
+
+		WC_Admin_Settings::$errors = array();
+		$_POST                     = array();
 	}
 
 	/**
@@ -231,5 +235,110 @@ class HMFWSettingsTest extends TestCase {
 		$html = ob_get_clean();
 
 		$this->assertStringContainsString( 'wordpress.org/support/plugin/holiday-mode-for-woocommerce', $html );
+	}
+
+	/**
+	 * Activating Holiday Mode without a start/end date or message must add
+	 * admin errors and keep the status forced back to "no".
+	 */
+	public function testSaveRejectsActivationWithEmptyFields(): void {
+		$page = $this->createSettingsPage();
+
+		$_POST['hmfw_holiday_status'] = 'yes';
+
+		$page->save();
+
+		$this->assertArrayNotHasKey( 'hmfw_holiday_status', $_POST );
+		$this->assertNotEmpty( WC_Admin_Settings::$errors );
+	}
+
+	/**
+	 * Activating Holiday Mode with an invalid (unparseable) date must add an
+	 * admin error and keep the status forced back to "no".
+	 */
+	public function testSaveRejectsActivationWithInvalidDate(): void {
+		$page = $this->createSettingsPage();
+
+		$_POST['hmfw_holiday_status']    = 'yes';
+		$_POST['hmfw_holiday_startdate'] = 'not-a-date';
+		$_POST['hmfw_holiday_enddate']   = '2030-01-10';
+		$_POST['hmfw_holiday_message']   = 'We are closed.';
+
+		$page->save();
+
+		$this->assertArrayNotHasKey( 'hmfw_holiday_status', $_POST );
+		$this->assertNotEmpty( WC_Admin_Settings::$errors );
+	}
+
+	/**
+	 * Activating Holiday Mode with an end date before the start date must
+	 * add an admin error and keep the status forced back to "no".
+	 */
+	public function testSaveRejectsActivationWithEndDateBeforeStartDate(): void {
+		$page = $this->createSettingsPage();
+
+		$_POST['hmfw_holiday_status']    = 'yes';
+		$_POST['hmfw_holiday_startdate'] = '2030-01-10';
+		$_POST['hmfw_holiday_enddate']   = '2030-01-01';
+		$_POST['hmfw_holiday_message']   = 'We are closed.';
+
+		$page->save();
+
+		$this->assertArrayNotHasKey( 'hmfw_holiday_status', $_POST );
+		$this->assertNotEmpty( WC_Admin_Settings::$errors );
+	}
+
+	/**
+	 * Activating Holiday Mode with a blank (whitespace-only) message must
+	 * add an admin error and keep the status forced back to "no".
+	 */
+	public function testSaveRejectsActivationWithBlankMessage(): void {
+		$page = $this->createSettingsPage();
+
+		$_POST['hmfw_holiday_status']    = 'yes';
+		$_POST['hmfw_holiday_startdate'] = '2030-01-01';
+		$_POST['hmfw_holiday_enddate']   = '2030-01-10';
+		$_POST['hmfw_holiday_message']   = '   ';
+
+		$page->save();
+
+		$this->assertArrayNotHasKey( 'hmfw_holiday_status', $_POST );
+		$this->assertNotEmpty( WC_Admin_Settings::$errors );
+	}
+
+	/**
+	 * Activating Holiday Mode with a valid date range and message must not
+	 * produce any admin errors, and must keep the status untouched so it can
+	 * actually be saved as "yes".
+	 */
+	public function testSaveAllowsActivationWithValidFields(): void {
+		$page = $this->createSettingsPage();
+
+		$_POST['hmfw_holiday_status']    = 'yes';
+		$_POST['hmfw_holiday_startdate'] = '2030-01-01';
+		$_POST['hmfw_holiday_enddate']   = '2030-01-10';
+		$_POST['hmfw_holiday_message']   = 'We are closed.';
+
+		$page->save();
+
+		$this->assertSame( 'yes', $_POST['hmfw_holiday_status'] );
+		$this->assertEmpty( WC_Admin_Settings::$errors );
+	}
+
+	/**
+	 * Deactivating Holiday Mode (checkbox unchecked, so it's absent from
+	 * $_POST) must skip validation entirely, regardless of what other
+	 * fields contain.
+	 */
+	public function testSaveSkipsValidationWhenDeactivating(): void {
+		$page = $this->createSettingsPage();
+
+		$_POST['hmfw_holiday_startdate'] = '';
+		$_POST['hmfw_holiday_enddate']   = '';
+		$_POST['hmfw_holiday_message']   = '';
+
+		$page->save();
+
+		$this->assertEmpty( WC_Admin_Settings::$errors );
 	}
 }
