@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    uses: your-org/github-workflows/.github/workflows/build-and-deploy-to-wporg.yml@main
+    uses: HFranz/github-workflows/.github/workflows/build-and-deploy-to-wporg.yml@main
     with:
       plugin-slug: holiday-mode-for-woocommerce
       deploy: true
