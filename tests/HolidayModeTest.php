@@ -323,6 +323,49 @@ class HolidayModeTest extends TestCase {
 	}
 
 	/**
+	 * Purchasing must be disabled by default (backwards compatible with
+	 * previous plugin versions, where this was not yet configurable), even
+	 * when the "hmfw_disable_purchasing" option has never been saved.
+	 */
+	public function testWoocommerceHolidayModeDisablesPurchasingByDefault(): void {
+		$today = new \DateTime( 'today midnight', \wp_timezone() );
+
+		\update_option( 'hmfw_holiday_status', 'yes' );
+		\update_option( 'hmfw_holiday_startdate', ( clone $today )->modify( '-1 day' )->format( 'Y-m-d' ) );
+		\update_option( 'hmfw_holiday_enddate', ( clone $today )->modify( '+1 day' )->format( 'Y-m-d' ) );
+
+		\hmfw_woocommerce_holiday_mode();
+
+		$this->assertNotFalse( \has_filter( 'woocommerce_is_purchasable', '__return_false' ) );
+	}
+
+	/**
+	 * Merchants who only want the holiday notice, without actually blocking
+	 * purchases, can opt out via the "hmfw_disable_purchasing" checkbox.
+	 */
+	public function testWoocommerceHolidayModeKeepsPurchasingEnabledWhenOptedOut(): void {
+		$today = new \DateTime( 'today midnight', \wp_timezone() );
+
+		\add_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button', 20 );
+		\add_action( 'woocommerce_external_add_to_cart', 'woocommerce_external_add_to_cart', 30 );
+		\add_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
+
+		\update_option( 'hmfw_holiday_status', 'yes' );
+		\update_option( 'hmfw_disable_purchasing', 'no' );
+		\update_option( 'hmfw_holiday_startdate', ( clone $today )->modify( '-1 day' )->format( 'Y-m-d' ) );
+		\update_option( 'hmfw_holiday_enddate', ( clone $today )->modify( '+1 day' )->format( 'Y-m-d' ) );
+
+		\hmfw_woocommerce_holiday_mode();
+
+		$this->assertFalse( \has_filter( 'woocommerce_is_purchasable', '__return_false' ) );
+		$this->assertNotFalse( \has_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button' ) );
+		$this->assertNotFalse( \has_action( 'woocommerce_external_add_to_cart', 'woocommerce_external_add_to_cart' ) );
+		$this->assertNotFalse( \has_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart' ) );
+		// The holiday notice must still be shown even when purchasing stays enabled.
+		$this->assertNotFalse( \has_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled' ) );
+	}
+
+	/**
 	 * Regression test: on the single product page, both
 	 * woocommerce_before_main_content and woocommerce_before_single_product
 	 * fire during the same page load, since the latter is nested inside the

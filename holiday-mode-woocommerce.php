@@ -124,7 +124,7 @@ add_action( 'upgrader_process_complete', 'hmfw_migrate_after_plugin_update', 10,
  * instead of waiting for the 'init' fallback below.
  *
  * @param WP_Upgrader $upgrader_object Upgrader instance (unused).
- * @param array        $options         Details about the bulk/single update that just completed.
+ * @param array       $options         Details about the bulk/single update that just completed.
  */
 function hmfw_migrate_after_plugin_update( WP_Upgrader $upgrader_object, array $options ): void {
 	if ( 'update' !== ( $options['action'] ?? '' ) || 'plugin' !== ( $options['type'] ?? '' ) ) {
@@ -214,21 +214,26 @@ function hmfw_woocommerce_holiday_mode(): void {
 		define( 'DONOTCACHEPAGE', true );
 	}
 
-	add_filter( 'woocommerce_is_purchasable', '__return_false' );
-	// Disable Cart, Checkout, Add Cart.
-	remove_action( 'woocommerce_proceed_to_checkout', 'woocommerce_button_proceed_to_checkout', 20 );
-	remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
-	// Variable products render their "Add to cart" button independently of
-	// woocommerce_is_purchasable (WooCommerce only hides/disables it client-side,
-	// per selected variation, via JS), so it must be removed explicitly here too.
-	remove_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button', 20 );
-	// External/affiliate products render their "Buy product" button as soon as
-	// an add-to-cart URL is set, regardless of woocommerce_is_purchasable, so it
-	// must be removed explicitly here too, same as for variable products above.
-	remove_action( 'woocommerce_external_add_to_cart', 'woocommerce_external_add_to_cart', 30 );
-	// Grouped products list each child's own add-to-cart control the same way,
-	// independently of woocommerce_is_purchasable.
-	remove_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
+	// Disable Cart, Checkout, Add Cart. Kept as its own, separately switchable
+	// option ('yes' by default, matching the plugin's historical behaviour),
+	// since some merchants only want the holiday notice without actually
+	// blocking purchases.
+	if ( 'yes' === get_option( 'hmfw_disable_purchasing', 'yes' ) ) {
+		add_filter( 'woocommerce_is_purchasable', '__return_false' );
+		remove_action( 'woocommerce_proceed_to_checkout', 'woocommerce_button_proceed_to_checkout', 20 );
+		remove_action( 'woocommerce_checkout_order_review', 'woocommerce_checkout_payment', 20 );
+		// Variable products render their "Add to cart" button independently of
+		// woocommerce_is_purchasable (WooCommerce only hides/disables it client-side,
+		// per selected variation, via JS), so it must be removed explicitly here too.
+		remove_action( 'woocommerce_single_variation', 'woocommerce_single_variation_add_to_cart_button', 20 );
+		// External/affiliate products render their "Buy product" button as soon as
+		// an add-to-cart URL is set, regardless of woocommerce_is_purchasable, so it
+		// must be removed explicitly here too, same as for variable products above.
+		remove_action( 'woocommerce_external_add_to_cart', 'woocommerce_external_add_to_cart', 30 );
+		// Grouped products list each child's own add-to-cart control the same way,
+		// independently of woocommerce_is_purchasable.
+		remove_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
+	}
 
 	// Block themes (e.g. Twenty Twenty-Five) render the *entire* block
 	// template via get_the_block_template_html() before wp_head()/

@@ -632,6 +632,27 @@ if ( ! function_exists( 'has_action' ) ) {
 }
 
 /**
+ * Mock has_filter function
+ */
+if ( ! function_exists( 'has_filter' ) ) {
+	function has_filter( $hook, $callback = false ) {
+		global $wp_filter;
+		if ( ! isset( $wp_filter[ $hook ] ) ) {
+			return false;
+		}
+		if ( false === $callback ) {
+			return ! empty( $wp_filter[ $hook ] );
+		}
+		foreach ( $wp_filter[ $hook ] as $filter ) {
+			if ( $filter['function'] === $callback ) {
+				return $filter['priority'];
+			}
+		}
+		return false;
+	}
+}
+
+/**
  * Mock WP_Upgrader class, just enough of a stand-in so code that type-hints
  * against it (e.g. 'upgrader_process_complete' callbacks) can be unit tested.
  */

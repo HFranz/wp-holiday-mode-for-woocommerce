@@ -51,6 +51,13 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 					'default' => 'no',
 				),
 				array(
+					'title'   => __( 'Disable purchasing', 'holiday-mode-woocommerce' ),
+					'desc'    => __( 'Make all products non-purchasable and remove the add-to-cart buttons while Holiday Mode is active.', 'holiday-mode-woocommerce' ),
+					'id'      => 'hmfw_disable_purchasing',
+					'type'    => 'checkbox',
+					'default' => 'yes',
+				),
+				array(
 					'title'    => __( 'Start of Holidays', 'holiday-mode-woocommerce' ),
 					'desc_tip' => __( 'Enter first day of Holidays here.', 'holiday-mode-woocommerce' ),
 					'id'       => 'hmfw_holiday_startdate',
