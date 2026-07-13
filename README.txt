@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.7
 Tested up to: 7.0
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 Requires PHP: 8.3
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -46,6 +46,10 @@ screenshot-2.jpg
 screenshot-3.jpg
 
 == Changelog ==
+
+= 2.4.0 =
+* New: Settings are now validated on save - Holiday Mode can no longer be activated with a missing/invalid date range or an empty vacation message.
+* New: "Disable purchasing" setting lets you choose whether Holiday Mode blocks purchases (removes add-to-cart) or only shows the holiday notice. Enabled by default.
 
 = 2.3.0 =
 * Lower minimum required PHP version to 8.3 to allow installation on WordPress 6.7 and higher.
