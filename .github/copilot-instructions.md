@@ -1,3 +1,6 @@
+# Project standards
+See [`AGENTS.md`](../AGENTS.md) at the repository root for architecture, conventions, and workflows. It is the primary source of truth for AI coding agents working in this repository — always read it before making changes.
+
 # Response style
 - Be concise.
 - No introductions or conclusions.
