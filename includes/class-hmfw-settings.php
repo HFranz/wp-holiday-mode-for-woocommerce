@@ -25,6 +25,8 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 			$this->label = __( 'Holiday Mode', 'holiday-mode-woocommerce' );
 
 			parent::__construct();
+
+			add_action( 'woocommerce_after_settings_' . $this->id, array( $this, 'output_rating_notice' ) );
 		}
 
 		/**
@@ -82,6 +84,29 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 			 * @param string $current_section Current section slug.
 			 */
 			return apply_filters( 'hmfw_holiday_mode_settings', $settings, $current_section );
+		}
+
+		/**
+		 * Output a rating request notice below the Save button.
+		 */
+		public function output_rating_notice(): void {
+			printf(
+				'<div style="padding: 0 30px 40px;background: #f0f0f1;">%s</div>',
+				wp_kses(
+					sprintf(
+						/* translators: %s: five-star rating link */
+						__( 'If you like Holiday Mode for WooCommerce, please take a moment to leave us a %s rating. Thank you!', 'holiday-mode-woocommerce' ),
+						'<a href="https://wordpress.org/support/plugin/holiday-mode-for-woocommerce/reviews/?rate=5#new-post" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
+					),
+					array(
+						'a' => array(
+							'href'   => array(),
+							'target' => array(),
+							'rel'    => array(),
+						),
+					)
+				)
+			); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
 	}
 

@@ -7,13 +7,18 @@
 
 namespace Hfranz\WpHolidayModeForWoocommerce\Tests;
 
+use HMFW_Settings;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use function add_filter;
+use function apply_filters;
+use function do_action;
+use function has_action;
 
 /**
  * Unit tests for the HMFW_Settings WooCommerce settings page.
  */
-#[CoversClass( \HMFW_Settings::class )]
+#[CoversClass( HMFW_Settings::class )]
 class HMFWSettingsTest extends TestCase {
 
 	/**
@@ -29,9 +34,9 @@ class HMFWSettingsTest extends TestCase {
 	/**
 	 * Instantiate a fresh HMFW_Settings page for each test.
 	 *
-	 * @return \HMFW_Settings
+	 * @return HMFW_Settings
 	 */
-	private function createSettingsPage(): \HMFW_Settings {
+	private function createSettingsPage(): HMFW_Settings {
 		return require dirname( __DIR__ ) . '/includes/class-hmfw-settings.php';
 	}
 
@@ -51,7 +56,7 @@ class HMFWSettingsTest extends TestCase {
 	public function testSettingsPageIsRegisteredWithWooCommerceTabs(): void {
 		$this->createSettingsPage();
 
-		$tabs = \apply_filters( 'woocommerce_settings_tabs_array', array() );
+		$tabs = apply_filters( 'woocommerce_settings_tabs_array', array() );
 
 		$this->assertArrayHasKey( 'holiday_mode', $tabs );
 		$this->assertSame( 'Holiday Mode', $tabs['holiday_mode'] );
@@ -139,9 +144,9 @@ class HMFWSettingsTest extends TestCase {
 	public function testGetSettingsIsFilterable(): void {
 		$page = $this->createSettingsPage();
 
-		\add_filter(
+		add_filter(
 			'hmfw_holiday_mode_settings',
-			function ( $settings, $current_section ) {
+			function ( $settings ) {
 				$settings[] = array(
 					'id'   => 'hmfw_test_extra_field',
 					'type' => 'text',
@@ -165,7 +170,7 @@ class HMFWSettingsTest extends TestCase {
 		$page = $this->createSettingsPage();
 
 		$received_section = null;
-		\add_filter(
+		add_filter(
 			'hmfw_holiday_mode_settings',
 			function ( $settings, $current_section ) use ( &$received_section ) {
 				$received_section = $current_section;
@@ -178,5 +183,53 @@ class HMFWSettingsTest extends TestCase {
 		$page->get_settings( 'some-section' );
 
 		$this->assertSame( 'some-section', $received_section );
+	}
+
+	/**
+	 * Instantiating the page must register a rating notice callback on the
+	 * 'woocommerce_after_settings_holiday_mode' action (fired below the Save button).
+	 */
+	public function testRatingNoticeIsRegisteredOnAfterSettingsHook(): void {
+		$page = $this->createSettingsPage();
+
+		$this->assertSame(
+			10,
+			has_action( 'woocommerce_after_settings_holiday_mode', array( $page, 'output_rating_notice' ) )
+		);
+	}
+
+	/**
+	 * output_rating_notice() must print an escaped rating request containing
+	 * a link to the WordPress.org reviews page.
+	 */
+	public function testOutputRatingNoticePrintsFiveStarReviewLink(): void {
+		$page = $this->createSettingsPage();
+
+		ob_start();
+		$page->output_rating_notice();
+		$html = ob_get_clean();
+
+		$this->assertStringContainsString( '<div', $html );
+		$this->assertStringContainsString(
+			'https://wordpress.org/support/plugin/holiday-mode-for-woocommerce/reviews/?rate=5#new-post',
+			$html
+		);
+		$this->assertStringContainsString( 'target="_blank"', $html );
+		$this->assertStringContainsString( 'rel="noopener noreferrer"', $html );
+		$this->assertStringContainsString( 'Holiday Mode for WooCommerce', $html );
+	}
+
+	/**
+	 * Triggering the 'woocommerce_after_settings_holiday_mode' action must
+	 * invoke the registered rating notice callback (end-to-end hook wiring).
+	 */
+	public function testAfterSettingsActionTriggersRatingNoticeOutput(): void {
+		$this->createSettingsPage();
+
+		ob_start();
+		do_action( 'woocommerce_after_settings_holiday_mode' );
+		$html = ob_get_clean();
+
+		$this->assertStringContainsString( 'wordpress.org/support/plugin/holiday-mode-for-woocommerce', $html );
 	}
 }
