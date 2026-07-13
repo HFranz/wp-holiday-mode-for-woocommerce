@@ -2,7 +2,7 @@
 /**
  * WordPress and WooCommerce core function/class mocks used by the PHPUnit test suite.
  *
- * This file provides minimal, behaviour-compatible stand-ins for WordPress core
+ * This file provides minimal, behavior-compatible stand-ins for WordPress core
  * (and a few WooCommerce) functions/classes so the plugin's own code can be
  * unit tested without a full WordPress installation.
  *
@@ -209,7 +209,7 @@ if ( ! function_exists( 'remove_action' ) ) {
  * Mock add_menu_page function
  */
 if ( ! function_exists( 'add_menu_page' ) ) {
-	function add_menu_page( $page_title, $menu_title, $capability, $menu_slug, $callback, $icon_url = '', $position = null ): true {
+	function add_menu_page(): true {
 		return true;
 	}
 }
@@ -218,7 +218,7 @@ if ( ! function_exists( 'add_menu_page' ) ) {
  * Mock add_submenu_page function
  */
 if ( ! function_exists( 'add_submenu_page' ) ) {
-	function add_submenu_page( $parent_slug, $page_title, $menu_title, $capability, $menu_slug, $callback = '' ): true {
+	function add_submenu_page(): true {
 		return true;
 	}
 }
@@ -227,7 +227,7 @@ if ( ! function_exists( 'add_submenu_page' ) ) {
  * Mock register_setting function
  */
 if ( ! function_exists( 'register_setting' ) ) {
-	function register_setting( $option_group, $option_name, $args = array() ): true {
+	function register_setting(): true {
 		return true;
 	}
 }
@@ -236,7 +236,7 @@ if ( ! function_exists( 'register_setting' ) ) {
  * Mock add_settings_section function
  */
 if ( ! function_exists( 'add_settings_section' ) ) {
-	function add_settings_section( $id, $title, $callback, $page ): true {
+	function add_settings_section(): true {
 		return true;
 	}
 }
@@ -245,7 +245,7 @@ if ( ! function_exists( 'add_settings_section' ) ) {
  * Mock add_settings_field function
  */
 if ( ! function_exists( 'add_settings_field' ) ) {
-	function add_settings_field( $id, $title, $callback, $page, $section, $args = array() ): true {
+	function add_settings_field(): true {
 		return true;
 	}
 }
@@ -264,7 +264,7 @@ if ( ! function_exists( 'get_option' ) ) {
  * Mock update_option function
  */
 if ( ! function_exists( 'update_option' ) ) {
-	function update_option( $option, $value, $autoload = null ): bool {
+	function update_option( $option, $value ): bool {
 		global $_test_options;
 		$_test_options[ $option ] = $value;
 		return true;
@@ -286,7 +286,7 @@ if ( ! function_exists( 'delete_option' ) ) {
  * Mock admin_url function
  */
 if ( ! function_exists( 'admin_url' ) ) {
-	function admin_url( $path = '', $scheme = 'admin' ): string {
+	function admin_url( $path = '' ): string {
 		return 'http://example.com/wp-admin/' . ltrim( $path, '/' );
 	}
 }
@@ -322,7 +322,7 @@ if ( ! function_exists( 'esc_url' ) ) {
  * Mock esc_html__ function
  */
 if ( ! function_exists( 'esc_html__' ) ) {
-	function esc_html__( $text, $domain = 'default' ): string {
+	function esc_html__( $text ): string {
 		return htmlspecialchars( $text, ENT_QUOTES, 'UTF-8' );
 	}
 }
@@ -331,7 +331,7 @@ if ( ! function_exists( 'esc_html__' ) ) {
  * Mock esc_html_e function
  */
 if ( ! function_exists( 'esc_html_e' ) ) {
-	function esc_html_e( $text, $domain = 'default' ): void {
+	function esc_html_e( $text ): void {
 		echo htmlspecialchars( $text, ENT_QUOTES, 'UTF-8' );
 	}
 }
@@ -340,7 +340,7 @@ if ( ! function_exists( 'esc_html_e' ) ) {
  * Mock esc_attr_e function
  */
 if ( ! function_exists( 'esc_attr_e' ) ) {
-	function esc_attr_e( $text, $domain = 'default' ): void {
+	function esc_attr_e( $text ): void {
 		echo htmlspecialchars( $text, ENT_QUOTES, 'UTF-8' );
 	}
 }
@@ -349,7 +349,7 @@ if ( ! function_exists( 'esc_attr_e' ) ) {
  * Mock __() translation function
  */
 if ( ! function_exists( '__' ) ) {
-	function __( $text, $domain = 'default' ) {
+	function __( $text ) {
 		return $text;
 	}
 }
@@ -358,7 +358,7 @@ if ( ! function_exists( '__' ) ) {
  * Mock _e() translation function
  */
 if ( ! function_exists( '_e' ) ) {
-	function _e( $text, $domain = 'default' ): void {
+	function _e( $text ): void {
 		echo $text;
 	}
 }
@@ -367,7 +367,7 @@ if ( ! function_exists( '_e' ) ) {
  * Mock current_user_can function
  */
 if ( ! function_exists( 'current_user_can' ) ) {
-	function current_user_can( $capability ): true {
+	function current_user_can(): true {
 		return true;
 	}
 }
@@ -396,7 +396,7 @@ if ( ! function_exists( 'get_site_icon_url' ) ) {
  * Mock get_post_meta function
  */
 if ( ! function_exists( 'get_post_meta' ) ) {
-	function get_post_meta( $post_id, $key = '', $single = false ) {
+	function get_post_meta( $post_id, $key = '' ) {
 		global $_test_post_meta;
 		if ( isset( $_test_post_meta[ $post_id ][ $key ] ) ) {
 			return $_test_post_meta[ $post_id ][ $key ];
@@ -448,7 +448,7 @@ if ( ! function_exists( 'wp_enqueue_media' ) ) {
  * Mock wp_enqueue_script function
  */
 if ( ! function_exists( 'wp_enqueue_script' ) ) {
-	function wp_enqueue_script( $handle, $src = '', $deps = array(), $ver = false, $in_footer = false ): true {
+	function wp_enqueue_script(): true {
 		return true;
 	}
 }
@@ -457,7 +457,7 @@ if ( ! function_exists( 'wp_enqueue_script' ) ) {
  * Mock wp_enqueue_style function
  */
 if ( ! function_exists( 'wp_enqueue_style' ) ) {
-	function wp_enqueue_style( $handle, $src = '', $deps = array(), $ver = false, $media = 'all' ): true {
+	function wp_enqueue_style(): true {
 		return true;
 	}
 }
@@ -520,7 +520,7 @@ if ( ! function_exists( 'do_settings_sections' ) ) {
  * Mock submit_button function
  */
 if ( ! function_exists( 'submit_button' ) ) {
-	function submit_button( $text = null, $type = 'primary', $name = 'submit', $wrap = true, $other_attributes = null ): void {
+	function submit_button( $text = null, $type = 'primary', $name = 'submit' ): void {
 		$text = ! empty( $text ) ? $text : 'Save Changes';
 		echo '<input type="submit" name="' . esc_attr( $name ) . '" value="' . esc_attr( $text ) . '" class="button button-' . esc_attr( $type ) . '" />';
 	}
@@ -562,10 +562,11 @@ if ( ! function_exists( 'trailingslashit' ) ) {
 	/**
 	 * Adds a trailing slash to a string if it doesn't already have one.
 	 *
-	 * @param  string $string The string to modify.
+	 * @param string $string The string to modify.
+	 *
 	 * @return string The modified string with a trailing slash.
 	 */
-	function trailingslashit( $string ): string {
+	function trailingslashit( string $string ): string {
 		return rtrim( $string, '/' ) . '/';
 	}
 }
@@ -577,11 +578,12 @@ if ( ! function_exists( 'network_home_url' ) ) {
 	/**
 	 * Mock network_home_url function
 	 *
-	 * @param  string $path   Optional. Path relative to the network home URL.
+	 * @param string $path   Optional. Path relative to the network home URL.
 	 * @param  string $scheme Optional. Scheme to use for the URL.
+	 *
 	 * @return string The network home URL.
 	 */
-	function network_home_url( $path = '', $scheme = 'https' ): string {
+	function network_home_url( string $path = '', string $scheme = 'https' ): string {
 		$base_url = 'http://example.com';
 		if ( 'https' === $scheme ) {
 			$base_url = preg_replace( '/^http:/', 'https:', $base_url );
@@ -668,23 +670,11 @@ if ( ! class_exists( 'WP_Role' ) ) {
 	class WP_Role {
 
 		public $name;
-		public $capabilities = array();
+		public mixed $capabilities = array();
 
 		public function __construct( $name, $capabilities = array() ) {
 			$this->name         = $name;
 			$this->capabilities = $capabilities;
-		}
-
-		public function add_cap( $cap, $grant = true ) {
-			$this->capabilities[ $cap ] = $grant;
-		}
-
-		public function remove_cap( $cap ) {
-			unset( $this->capabilities[ $cap ] );
-		}
-
-		public function has_cap( $cap ) {
-			return isset( $this->capabilities[ $cap ] ) && $this->capabilities[ $cap ];
 		}
 	}
 }
@@ -695,14 +685,13 @@ if ( ! class_exists( 'WP_Role' ) ) {
 if ( ! class_exists( 'WP_Roles' ) ) {
 	class WP_Roles {
 
-		public $role_objects = array();
-		public $roles        = array();
+		public array $role_objects = array();
 
 		public function __construct() {
 			$this->init_roles();
 		}
 
-		private function init_roles() {
+		private function init_roles(): void {
 			$this->role_objects['administrator']  = new WP_Role(
 				'administrator',
 				array(
@@ -714,11 +703,6 @@ if ( ! class_exists( 'WP_Roles' ) ) {
 
 		public function get_role( $role ) {
 			return $this->role_objects[ $role ] ?? null;
-		}
-
-		public function add_role( $role, $display_name, $capabilities = array() ) {
-			$this->role_objects[ $role ] = new WP_Role( $role, $capabilities );
-			return $this->role_objects[ $role ];
 		}
 	}
 }
@@ -734,14 +718,14 @@ if ( ! class_exists( 'WP_Site' ) ) {
 		 *
 		 * @var int
 		 */
-		public $blog_id = 0;
+		public int $blog_id = 0;
 
 		/**
 		 * Constructor.
 		 *
 		 * @param object|array|int $site Site data or blog ID.
 		 */
-		public function __construct( $site = 0 ) {
+		public function __construct( object|array|int $site = 0 ) {
 			if ( is_numeric( $site ) ) {
 				$this->blog_id = (int) $site;
 				return;
@@ -782,7 +766,7 @@ if ( ! function_exists( 'get_role' ) ) {
  * Mock get_sites function
  */
 if ( ! function_exists( 'get_sites' ) ) {
-	function get_sites( $args = array() ) {
+	function get_sites(): array {
 		global $_test_sites;
 
 		// Wenn keine Test-Sites definiert sind, Standard-Site zurückgeben.
@@ -833,7 +817,7 @@ if ( ! function_exists( 'delete_site_option' ) ) {
  * Mock current_time function
  */
 if ( ! function_exists( 'current_time' ) ) {
-	function current_time( $type = 'timestamp', $gmt = 0 ) {
+	function current_time( $type = 'timestamp' ): int|string {
 		if ( 'mysql' === $type ) {
 			return date( 'Y-m-d H:i:s' );
 		}
@@ -845,7 +829,7 @@ if ( ! function_exists( 'current_time' ) ) {
  * Mock get_site_url function
  */
 if ( ! function_exists( 'get_site_url' ) ) {
-	function get_site_url( $blog_id = null, $path = '', $scheme = null ): string {
+	function get_site_url(): string {
 		return 'http://example.com';
 	}
 }
@@ -863,14 +847,6 @@ if ( ! class_exists( 'WP_Error' ) ) {
 			$this->code    = $code;
 			$this->message = $message;
 		}
-
-		public function get_error_message( $code = '' ): string {
-			return $this->message;
-		}
-
-		public function get_error_code(): string {
-			return $this->code;
-		}
 	}
 }
 
@@ -878,7 +854,7 @@ if ( ! class_exists( 'WP_Error' ) ) {
  * Mock wp_unslash function
  */
 if ( ! function_exists( 'wp_unslash' ) ) {
-	function wp_unslash( $value ) {
+	function wp_unslash( $value ): array|string {
 		return is_array( $value ) ? array_map( 'wp_unslash', $value ) : stripslashes( $value );
 	}
 }
@@ -887,7 +863,7 @@ if ( ! function_exists( 'wp_unslash' ) ) {
  * Mock wp_verify_nonce function
  */
 if ( ! function_exists( 'wp_verify_nonce' ) ) {
-	function wp_verify_nonce( $nonce, $action = -1 ): bool {
+	function wp_verify_nonce(): bool {
 		return false;
 	}
 }
@@ -896,7 +872,7 @@ if ( ! function_exists( 'wp_verify_nonce' ) ) {
  * Mock wp_nonce_field function
  */
 if ( ! function_exists( 'wp_nonce_field' ) ) {
-	function wp_nonce_field( $action = -1, $name = '_wpnonce', $referer = true, $echo = true ): string {
+	function wp_nonce_field( $action = -1, $name = '_wpnonce', $echo = true ): string {
 		$field = '<input type="hidden" id="' . esc_attr( $name ) . '" name="' . esc_attr( $name ) . '" value="' . wp_create_nonce( $action ) . '" />';
 		if ( $echo ) {
 			echo $field;
@@ -922,8 +898,8 @@ if ( ! function_exists( 'checked' ) ) {
  * Mock wp_die function
  */
 if ( ! function_exists( 'wp_die' ) ) {
-	function wp_die( $message = '', $title = '', $args = array() ): void {
-		throw new \RuntimeException( is_string( $message ) ? $message : 'wp_die called' );
+	function wp_die( $message = '' ): void {
+		throw new RuntimeException( is_string( $message ) ? $message : 'wp_die called' );
 	}
 }
 
@@ -974,10 +950,10 @@ if ( ! function_exists( 'load_plugin_textdomain' ) ) {
  *
  * NOTE: wp_next_scheduled, wp_schedule_event, wp_unschedule_event, and wp_mail
  * are intentionally NOT pre-defined here so that WP_Mock::userFunction() can
- * intercept them with test-specific behaviour in individual test cases.
+ * intercept them with test-specific behavior in individual test cases.
  */
 if ( ! function_exists( 'wp_clear_scheduled_hook' ) ) {
-	function wp_clear_scheduled_hook( $hook, $args = array(), $wp_error = false ) {
+	function wp_clear_scheduled_hook(): int {
 		return 0;
 	}
 }
@@ -987,12 +963,11 @@ if ( ! function_exists( 'wp_clear_scheduled_hook' ) ) {
  * Mock wp_kses function
  */
 if ( ! function_exists( 'wp_kses' ) ) {
-	function wp_kses( $string, $allowed_html, $allowed_protocols = array() ): string {
+	function wp_kses( $string, $allowed_html ): string {
 		if ( ! is_array( $allowed_html ) || empty( $allowed_html ) ) {
 			return strip_tags( $string );
 		}
 
-		$allowed_tags = implode( '|', array_keys( $allowed_html ) );
 		return preg_replace_callback(
 			'/<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/i',
 			function ( $matches ) use ( $allowed_html ) {
@@ -1011,7 +986,7 @@ if ( ! function_exists( 'wp_kses' ) ) {
  * Mock get_bloginfo function
  */
 if ( ! function_exists( 'get_bloginfo' ) ) {
-	function get_bloginfo( $show = '', $filter = 'raw' ): string {
+	function get_bloginfo( $show = '' ): string {
 		global $_test_bloginfo;
 		return $_test_bloginfo[ $show ] ?? '';
 	}
@@ -1023,7 +998,7 @@ if ( ! function_exists( 'get_bloginfo' ) ) {
 if ( ! function_exists( 'is_multisite' ) ) {
 	function is_multisite(): bool {
 		global $_test_is_multisite;
-		return (bool) $_test_is_multisite;
+		return $_test_is_multisite;
 	}
 }
 
@@ -1031,9 +1006,9 @@ if ( ! function_exists( 'is_multisite' ) ) {
  * Mock is_main_site function
  */
 if ( ! function_exists( 'is_main_site' ) ) {
-	function is_main_site( $site_id = null ): bool {
+	function is_main_site(): bool {
 		global $_test_is_main_site;
-		return (bool) $_test_is_main_site;
+		return $_test_is_main_site;
 	}
 }
 
@@ -1041,7 +1016,7 @@ if ( ! function_exists( 'is_main_site' ) ) {
  * Mock wp_date function
  */
 if ( ! function_exists( 'wp_date' ) ) {
-	function wp_date( string $format, $timestamp = null, $timezone = null ): string|false {
+	function wp_date( string $format, $timestamp = null ): string|false {
 		if ( null === $timestamp ) {
 			$timestamp = time();
 		}

@@ -11,6 +11,9 @@ namespace Hfranz\WpHolidayModeForWoocommerce\Tests;
 
 use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\TestCase;
+use stdClass;
+use function add_action;
+use function hmfw_maybe_flush_cache_on_settings_save;
 
 #[CoversFunction( 'hmfw_maybe_flush_cache_on_settings_save' )]
 class SettingsSaveCacheFlushTest extends TestCase {
@@ -36,11 +39,11 @@ class SettingsSaveCacheFlushTest extends TestCase {
 	 * the closure (bound by reference) is visible on the object returned
 	 * here, regardless of PHP's copy-on-write semantics for arrays.
 	 */
-	private function trackFlushCalls(): \stdClass {
-		$state         = new \stdClass();
+	private function trackFlushCalls(): stdClass {
+		$state         = new stdClass();
 		$state->called = false;
 
-		\add_action(
+		add_action(
 			'hmfw_flush_page_cache',
 			function () use ( $state ) {
 				$state->called = true;
@@ -53,7 +56,7 @@ class SettingsSaveCacheFlushTest extends TestCase {
 	public function testDoesNotFlushWhenTabIsMissing(): void {
 		$state = $this->trackFlushCalls();
 
-		\hmfw_maybe_flush_cache_on_settings_save();
+		hmfw_maybe_flush_cache_on_settings_save();
 
 		$this->assertFalse( $state->called );
 	}
@@ -63,7 +66,7 @@ class SettingsSaveCacheFlushTest extends TestCase {
 
 		$state = $this->trackFlushCalls();
 
-		\hmfw_maybe_flush_cache_on_settings_save();
+		hmfw_maybe_flush_cache_on_settings_save();
 
 		$this->assertFalse( $state->called );
 	}
@@ -73,7 +76,7 @@ class SettingsSaveCacheFlushTest extends TestCase {
 
 		$state = $this->trackFlushCalls();
 
-		\hmfw_maybe_flush_cache_on_settings_save();
+		hmfw_maybe_flush_cache_on_settings_save();
 
 		$this->assertTrue( $state->called );
 	}

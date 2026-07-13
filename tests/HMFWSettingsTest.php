@@ -98,7 +98,7 @@ class HMFWSettingsTest extends TestCase {
 	 * The "Activate" checkbox must default to 'no' (WooCommerce's yes/no
 	 * convention), so Holiday Mode never turns itself on unexpectedly.
 	 * "hmfw_disable_purchasing" is the sole, deliberate exception: it
-	 * defaults to 'yes' to preserve the plugin's pre-existing behaviour for
+	 * defaults to 'yes' to preserve the plugin's pre-existing behavior for
 	 * merchants upgrading from a version where this was not yet configurable.
 	 */
 	public function testCheckboxFieldsDefaultToNo(): void {
