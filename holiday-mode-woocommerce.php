@@ -41,6 +41,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'HMFW_VERSION', '2.4.0' );
 
+use Automattic\WooCommerce\Utilities\FeaturesUtil;
+
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-hmfw-cache-flusher.php';
 
 add_action( 'init', 'hmfw_load_textdomain' );
@@ -57,12 +59,12 @@ add_action( 'before_woocommerce_init', 'hmfw_declare_wc_compatibility' );
  * and the Cart/Checkout blocks, so the plugin keeps working with modern WooCommerce.
  */
 function hmfw_declare_wc_compatibility(): void {
-	if ( ! class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
+	if ( ! class_exists( FeaturesUtil::class ) ) {
 		return;
 	}
 
-	\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
-	\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
+	FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
+	FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
 }
 
 add_filter( 'woocommerce_get_settings_pages', 'hmfw_add_settings_page' );
