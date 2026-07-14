@@ -2,11 +2,12 @@
     "name": "hfranz/wp-holiday-mode-for-woocommerce",
     "type": "wordpress-plugin",
     "require": {
-        "php": ">=8.3"
+        "php": ">=8.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^13.2",
-        "wp-coding-standards/wpcs": "^3.3.0"
+        "wp-coding-standards/wpcs": "^3.3.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1"
     },
     "autoload": {
         "psr-4": {

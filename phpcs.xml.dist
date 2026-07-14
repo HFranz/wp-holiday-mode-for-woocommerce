@@ -12,6 +12,10 @@
 	<arg name="colors"/>
 	<arg name="extensions" value="php"/>
 
+	<!-- Minimum PHP version supported by the plugin (see composer.json "require.php" -->
+	<!-- and the "Requires PHP" plugin header), used by PHPCompatibilityWP below. -->
+	<config name="testVersion" value="8.0-"/>
+
 	<!-- Full WordPress standard everywhere, including tests/: test code is just as -->
 	<!-- important as production code and should be held to the same bar. -->
 	<!--
@@ -23,6 +27,10 @@
 	<rule ref="WordPress">
 		<exclude name="Universal.WhiteSpace.PrecisionAlignment"/>
 	</rule>
+
+	<!-- Flags any code that would not run correctly on PHP 8.0, e.g. usage of -->
+	<!-- functions/syntax introduced in later PHP versions or removed since 8.0. -->
+	<rule ref="PHPCompatibilityWP"/>
 
 	<!--
 		The only sniff excluded for tests/ is file naming: PHPUnit test discovery
