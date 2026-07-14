@@ -49,6 +49,7 @@ screenshot-3.jpg
 
 = 2.5.0 =
 * Lower the minimum required PHP version to 8.0 to support websites still running PHP 8.0–8.3.
+* New: Added the option to select the color and icon for the absence message.
 
 = 2.4.0 =
 * New: Settings are now validated on save - Holiday Mode can no longer be activated with a missing/invalid date range or an empty vacation message.

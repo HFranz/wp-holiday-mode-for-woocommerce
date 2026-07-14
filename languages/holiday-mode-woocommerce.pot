@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-13T07:53:47+00:00\n"
+"POT-Creation-Date: 2026-07-14T20:29:31+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: holiday-mode-woocommerce\n"
@@ -43,7 +43,7 @@ msgstr ""
 msgid "Settings"
 msgstr ""
 
-#: holiday-mode-woocommerce.php:351
+#: holiday-mode-woocommerce.php:356
 msgid "<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active."
 msgstr ""
 
@@ -51,76 +51,92 @@ msgstr ""
 msgid "Holiday Mode"
 msgstr ""
 
-#: includes/class-hmfw-settings.php:41
+#: includes/class-hmfw-settings.php:42
 msgid "Holiday Mode Settings"
 msgstr ""
 
-#: includes/class-hmfw-settings.php:44
+#: includes/class-hmfw-settings.php:45
 msgid "Set your WooCommerce® shop to holiday or vacation mode. Use a date range to schedule closed time."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:47
+#: includes/class-hmfw-settings.php:48
 msgid "Activate"
 msgstr ""
 
-#: includes/class-hmfw-settings.php:48
+#: includes/class-hmfw-settings.php:49
 msgid "Activate Holiday Mode"
 msgstr ""
 
-#: includes/class-hmfw-settings.php:54
+#: includes/class-hmfw-settings.php:55
 msgid "Disable purchasing"
 msgstr ""
 
-#: includes/class-hmfw-settings.php:55
+#: includes/class-hmfw-settings.php:56
 msgid "Make all products non-purchasable and remove the add-to-cart buttons while Holiday Mode is active."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:61
+#: includes/class-hmfw-settings.php:62
 msgid "Start of Holidays"
 msgstr ""
 
-#: includes/class-hmfw-settings.php:62
+#: includes/class-hmfw-settings.php:63
 msgid "Enter first day of Holidays here."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:67
+#: includes/class-hmfw-settings.php:68
 msgid "End of Holidays"
 msgstr ""
 
-#: includes/class-hmfw-settings.php:68
+#: includes/class-hmfw-settings.php:69
 msgid "Enter last day of Holidays here."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:73
+#: includes/class-hmfw-settings.php:74
+msgid "Notice Color"
+msgstr ""
+
+#: includes/class-hmfw-settings.php:75
+msgid "Choose the color of the notice box shown for the vacation message."
+msgstr ""
+
+#: includes/class-hmfw-settings.php:81
+msgid "Red"
+msgstr ""
+
+#: includes/class-hmfw-settings.php:86
+msgid "Blue"
+msgstr ""
+
+#: includes/class-hmfw-settings.php:93
 msgid "Vacation message"
 msgstr ""
 
-#: includes/class-hmfw-settings.php:74
+#: includes/class-hmfw-settings.php:94
 msgid "Enter your Holiday message here."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:78
+#: includes/class-hmfw-settings.php:98
 msgid "I am on vacation."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:123
+#: includes/class-hmfw-settings.php:143
 msgid "Please enter a valid start date to activate Holiday Mode."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:127
+#: includes/class-hmfw-settings.php:147
 msgid "Please enter a valid end date to activate Holiday Mode."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:129
+#: includes/class-hmfw-settings.php:149
 msgid "The end date of Holiday Mode must not be before the start date."
 msgstr ""
 
-#: includes/class-hmfw-settings.php:135
+#: includes/class-hmfw-settings.php:155
 msgid "Please enter a vacation message to activate Holiday Mode."
 msgstr ""
 
 #. translators: %s: five-star rating link
-#: includes/class-hmfw-settings.php:179
+#: includes/class-hmfw-settings.php:238
 #, php-format
 msgid "If you like Holiday Mode for WooCommerce, please take a moment to leave us a %s rating. Thank you!"
 msgstr ""

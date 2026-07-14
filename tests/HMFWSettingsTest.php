@@ -15,6 +15,7 @@ use function add_filter;
 use function apply_filters;
 use function do_action;
 use function has_action;
+use function update_option;
 
 /**
  * Unit tests for the HMFW_Settings WooCommerce settings page.
@@ -28,8 +29,9 @@ class HMFWSettingsTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		global $wp_filter;
-		$wp_filter = array();
+		global $wp_filter, $_test_options;
+		$wp_filter    = array();
+		$_test_options = array();
 
 		WC_Admin_Settings::$errors = array();
 		$_POST                     = array();
@@ -79,7 +81,132 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertContains( 'hmfw_holiday_status', $ids );
 		$this->assertContains( 'hmfw_holiday_startdate', $ids );
 		$this->assertContains( 'hmfw_holiday_enddate', $ids );
+		$this->assertContains( 'hmfw_holiday_notice_type', $ids );
 		$this->assertContains( 'hmfw_holiday_message', $ids );
+	}
+
+	/**
+	 * The notice color field must use the custom 'hmfw_notice_type' field
+	 * type (rendered as Dashicons radio buttons, since native <select>
+	 * options cannot display icon fonts), default to a valid WooCommerce
+	 * notice type, and offer 'error' and 'notice' as options, each with a
+	 * label and a Dashicons icon class.
+	 */
+	public function testNoticeTypeFieldUsesCustomTypeWithIconOptions(): void {
+		$page     = $this->createSettingsPage();
+		$settings = $page->get_settings();
+
+		$notice_type_field = current(
+			array_filter( $settings, fn( $field ) => ( $field['id'] ?? '' ) === 'hmfw_holiday_notice_type' )
+		);
+
+		$this->assertNotFalse( $notice_type_field );
+		$this->assertSame( 'hmfw_notice_type', $notice_type_field['type'] );
+		$this->assertSame( 'error', $notice_type_field['default'] );
+		$this->assertArrayHasKey( 'error', $notice_type_field['options'] );
+		$this->assertArrayHasKey( 'notice', $notice_type_field['options'] );
+		$this->assertSame( 'dashicons-warning', $notice_type_field['options']['error']['icon'] );
+		$this->assertSame( 'dashicons-info', $notice_type_field['options']['notice']['icon'] );
+		$this->assertSame( '#e2401c', $notice_type_field['options']['error']['color'] );
+		$this->assertSame( '#1e85be', $notice_type_field['options']['notice']['color'] );
+		$this->assertNotEmpty( $notice_type_field['options']['error']['label'] );
+		$this->assertNotEmpty( $notice_type_field['options']['notice']['label'] );
+	}
+
+	/**
+	 * Instantiating the page must register the custom renderer for the
+	 * 'woocommerce_admin_field_hmfw_notice_type' action, so WooCommerce
+	 * actually calls it while outputting the settings form.
+	 */
+	public function testNoticeTypeFieldRendererIsRegisteredOnAdminFieldHook(): void {
+		$page = $this->createSettingsPage();
+
+		$this->assertNotFalse(
+			has_action( 'woocommerce_admin_field_hmfw_notice_type', array( $page, 'render_notice_type_field' ) )
+		);
+	}
+
+	/**
+	 * render_notice_type_field() must print a radio button (with a real
+	 * Dashicons icon) per option, and must mark the currently saved option
+	 * as checked.
+	 */
+	public function testRenderNoticeTypeFieldMarksSavedOptionAsChecked(): void {
+		$page = $this->createSettingsPage();
+
+		update_option( 'hmfw_holiday_notice_type', 'notice' );
+
+		$field = current(
+			array_filter( $page->get_settings(), fn( $field ) => ( $field['id'] ?? '' ) === 'hmfw_holiday_notice_type' )
+		);
+
+		ob_start();
+		$page->render_notice_type_field( $field );
+		$html = ob_get_clean();
+
+		$this->assertStringContainsString( 'dashicons-warning', $html );
+		$this->assertStringContainsString( 'dashicons-info', $html );
+		$this->assertStringContainsString( 'color: #e2401c', $html );
+		$this->assertStringContainsString( 'color: #1e85be', $html );
+		$this->assertMatchesRegularExpression( '/value="notice"[^>]*checked/', $html );
+		$this->assertDoesNotMatchRegularExpression( '/value="error"[^>]*checked/', $html );
+	}
+
+	/**
+	 * render_notice_type_field() must fall back to the field's default when
+	 * no option has been saved yet.
+	 */
+	public function testRenderNoticeTypeFieldFallsBackToDefaultWhenUnset(): void {
+		$page = $this->createSettingsPage();
+
+		$field = current(
+			array_filter( $page->get_settings(), fn( $field ) => ( $field['id'] ?? '' ) === 'hmfw_holiday_notice_type' )
+		);
+
+		ob_start();
+		$page->render_notice_type_field( $field );
+		$html = ob_get_clean();
+
+		$this->assertMatchesRegularExpression( '/value="error"[^>]*checked/', $html );
+	}
+
+	/**
+	 * render_notice_type_field() must render the field's desc_tip as a
+	 * WooCommerce-style help tooltip (the "?" icon used by every other
+	 * settings field), not as a plain description paragraph.
+	 */
+	public function testRenderNoticeTypeFieldRendersHelpTooltip(): void {
+		$page = $this->createSettingsPage();
+
+		$field = current(
+			array_filter( $page->get_settings(), fn( $field ) => ( $field['id'] ?? '' ) === 'hmfw_holiday_notice_type' )
+		);
+
+		ob_start();
+		$page->render_notice_type_field( $field );
+		$html = ob_get_clean();
+
+		$this->assertStringContainsString( 'woocommerce-help-tip', $html );
+		$this->assertStringContainsString( 'Choose the color of the notice box shown for the vacation message.', $html );
+	}
+
+	/**
+	 * render_notice_type_field() must space the individual radio options
+	 * apart from each other via a gap on the <fieldset>, instead of relying
+	 * on per-label margins.
+	 */
+	public function testRenderNoticeTypeFieldFieldsetHasGapBetweenOptions(): void {
+		$page = $this->createSettingsPage();
+
+		$field = current(
+			array_filter( $page->get_settings(), fn( $field ) => ( $field['id'] ?? '' ) === 'hmfw_holiday_notice_type' )
+		);
+
+		ob_start();
+		$page->render_notice_type_field( $field );
+		$html = ob_get_clean();
+
+		$this->assertMatchesRegularExpression( '/<fieldset[^>]*style="[^"]*gap:[^"]*"/', $html );
 	}
 
 	/**

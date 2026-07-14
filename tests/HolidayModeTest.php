@@ -109,6 +109,45 @@ class HolidayModeTest extends TestCase {
 		$this->assertStringContainsString( 'Store notice text', $output );
 	}
 
+	public function testShopDisabledUsesErrorNoticeTypeByDefault(): void {
+		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
+
+		ob_start();
+		hmfw_wc_shop_disabled();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'woocommerce-error', $output );
+	}
+
+	public function testShopDisabledUsesConfiguredNoticeType(): void {
+		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
+		update_option( 'hmfw_holiday_notice_type', 'notice' );
+
+		ob_start();
+		hmfw_wc_shop_disabled();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'woocommerce-notice', $output );
+		$this->assertStringNotContainsString( 'woocommerce-error', $output );
+	}
+
+	/**
+	 * Regression/security test: an invalid or tampered-with notice type
+	 * option (e.g. edited directly in the database) must not be passed
+	 * through unsanitized, and must fall back to 'error' instead.
+	 */
+	public function testShopDisabledFallsBackToErrorForInvalidNoticeType(): void {
+		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
+		update_option( 'hmfw_holiday_notice_type', '"><script>alert(1)</script>' );
+
+		ob_start();
+		hmfw_wc_shop_disabled();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'woocommerce-error', $output );
+		$this->assertStringNotContainsString( '<script>', $output );
+	}
+
 	public function testDeclareWcCompatibilityDoesNotThrowWhenFeaturesUtilMissing(): void {
 		$this->expectNotToPerformAssertions();
 		hmfw_declare_wc_compatibility();

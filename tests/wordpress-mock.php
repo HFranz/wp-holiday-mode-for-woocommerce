@@ -1092,6 +1092,22 @@ if ( ! function_exists( 'wc_print_notice' ) ) {
 }
 
 /**
+ * Mock wc_help_tip function. Mirrors WooCommerce core's tooltip markup
+ * closely enough for tests to assert on the icon and the escaped tip text.
+ */
+if ( ! function_exists( 'wc_help_tip' ) ) {
+	function wc_help_tip( $tip, $allow_html = false ): string {
+		if ( $allow_html ) {
+			$tip = htmlspecialchars( wp_kses_post( $tip ), ENT_QUOTES, 'UTF-8' );
+		} else {
+			$tip = esc_attr( $tip );
+		}
+
+		return '<span class="woocommerce-help-tip" tabindex="0" aria-label="' . $tip . '" data-tip="' . $tip . '"></span>';
+	}
+}
+
+/**
  * Mock is_product function
  */
 if ( ! function_exists( 'is_product' ) ) {

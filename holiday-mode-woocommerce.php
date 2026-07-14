@@ -307,7 +307,12 @@ function hmfw_wc_shop_disabled(): void {
 		$notice = get_option( 'woocommerce_demo_store_notice' );
 	}
 
-	wc_print_notice( wp_kses_post( $notice ), 'error' );
+	$notice_type = get_option( 'hmfw_holiday_notice_type', 'error' );
+	if ( ! in_array( $notice_type, array( 'error', 'notice' ), true ) ) {
+		$notice_type = 'error';
+	}
+
+	wc_print_notice( wp_kses_post( $notice ), $notice_type );
 
 	$hmfw_notice_already_printed = true;
 }

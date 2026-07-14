@@ -27,6 +27,7 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 			parent::__construct();
 
 			add_action( 'woocommerce_after_settings_' . $this->id, array( $this, 'output_rating_notice' ) );
+			add_action( 'woocommerce_admin_field_hmfw_notice_type', array( $this, 'render_notice_type_field' ) );
 		}
 
 		/**
@@ -68,6 +69,25 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 					'desc_tip' => __( 'Enter last day of Holidays here.', 'holiday-mode-woocommerce' ),
 					'id'       => 'hmfw_holiday_enddate',
 					'type'     => 'date',
+				),
+				array(
+					'title'    => __( 'Notice Color', 'holiday-mode-woocommerce' ),
+					'desc_tip' => __( 'Choose the color of the notice box shown for the vacation message.', 'holiday-mode-woocommerce' ),
+					'id'       => 'hmfw_holiday_notice_type',
+					'type'     => 'hmfw_notice_type',
+					'default'  => 'error',
+					'options'  => array(
+						'error'  => array(
+							'label' => __( 'Red', 'holiday-mode-woocommerce' ),
+							'icon'  => 'dashicons-warning',
+							'color' => '#e2401c',
+						),
+						'notice' => array(
+							'label' => __( 'Blue', 'holiday-mode-woocommerce' ),
+							'icon'  => 'dashicons-info',
+							'color' => '#1e85be',
+						),
+					),
 				),
 				array(
 					'title'             => __( 'Vacation message', 'holiday-mode-woocommerce' ),
@@ -165,6 +185,45 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 			}
 
 			return false !== strtotime( $date );
+		}
+
+		/**
+		 * Render the "Notice Color" field as radio buttons with real Dashicons
+		 * icons (always available in wp-admin), instead of a native <select>,
+		 * since <option> elements cannot render icon fonts/SVGs in any browser.
+		 *
+		 * @param array $value Field definition, as returned by get_settings().
+		 */
+		public function render_notice_type_field( array $value ): void {
+			$option_id      = $value['id'];
+			$current_value  = get_option( $option_id, $value['default'] ?? 'error' );
+			$field_title_id = 'setting-' . $option_id;
+			?>
+			<tr>
+				<th scope="row" class="titledesc">
+					<label id="<?php echo esc_attr( $field_title_id ); ?>"><?php echo esc_html( $value['title'] ); ?></label>
+					<?php if ( ! empty( $value['desc_tip'] ) ) : ?>
+						<?php echo wc_help_tip( $value['desc_tip'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wc_help_tip() escapes internally. ?>
+					<?php endif; ?>
+				</th>
+				<td class="forminp forminp-radio">
+					<fieldset aria-labelledby="<?php echo esc_attr( $field_title_id ); ?>" style="margin-top: -5px; display: flex; gap: 20px;">
+						<?php foreach ( $value['options'] as $option_key => $option ) : ?>
+							<label style="display: inline-flex; align-items: center; gap: 4px;">
+								<input
+									type="radio"
+									name="<?php echo esc_attr( $option_id ); ?>"
+									value="<?php echo esc_attr( $option_key ); ?>"
+									<?php checked( $current_value, $option_key ); ?>
+								/>
+								<span class="dashicons <?php echo esc_attr( $option['icon'] ); ?>" style="color: <?php echo esc_attr( $option['color'] ); ?>;" aria-hidden="true"></span>
+								<?php echo esc_html( $option['label'] ); ?>
+							</label>
+						<?php endforeach; ?>
+					</fieldset>
+				</td>
+			</tr>
+			<?php
 		}
 
 		/**
