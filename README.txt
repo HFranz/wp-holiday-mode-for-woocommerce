@@ -47,6 +47,9 @@ screenshot-3.jpg
 
 == Changelog ==
 
+= 2.5.0 =
+* Lower the minimum required PHP version to 8.0 to support websites still running PHP 8.0–8.3.
+
 = 2.4.0 =
 * New: Settings are now validated on save - Holiday Mode can no longer be activated with a missing/invalid date range or an empty vacation message.
 * New: "Disable purchasing" setting lets you choose whether Holiday Mode blocks purchases (removes add-to-cart) or only shows the holiday notice. Enabled by default.
