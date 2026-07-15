@@ -1,7 +1,7 @@
 === Holiday Mode for WooCommerce ===
 Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
-Requires at least: 6.7
+Requires at least: 6.0
 Tested up to: 7.0
 Stable tag: 2.5.0
 Requires PHP: 8.0
