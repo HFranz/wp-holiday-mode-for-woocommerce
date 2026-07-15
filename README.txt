@@ -41,8 +41,8 @@ Go to WooCommerce -> Settings -> Holiday Mode to configure your settings
 This plugin does not collect, process, or store any personal data.
 
 == Screenshots ==
-screenshot-1.jpg
-screenshot-2.jpg
+screenshot-1.png
+screenshot-2.png
 screenshot-3.png
 screenshot-4.png
 
