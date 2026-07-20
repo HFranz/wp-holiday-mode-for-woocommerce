@@ -1175,4 +1175,3 @@ if ( ! function_exists( 'wp_cache_flush' ) ) {
 		return true;
 	}
 }
-

@@ -81,5 +81,3 @@ class SettingsSaveCacheFlushTest extends TestCase {
 		$this->assertTrue( $state->called );
 	}
 }
-
-

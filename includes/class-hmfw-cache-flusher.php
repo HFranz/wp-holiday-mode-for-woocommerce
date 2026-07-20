@@ -100,4 +100,3 @@ if ( ! class_exists( 'HMFW_Cache_Flusher' ) ) :
 	}
 
 endif;
-

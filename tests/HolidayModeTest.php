@@ -48,11 +48,11 @@ class HolidayModeTest extends TestCase {
 
 		global $_test_theme_mods, $_test_options, $wp_filter, $hmfw_notice_already_printed, $_test_conditional_tags, $_test_is_block_theme;
 		$_test_theme_mods            = array();
-		$_test_options                = array();
-		$wp_filter                    = array();
+		$_test_options               = array();
+		$wp_filter                   = array();
 		$hmfw_notice_already_printed = false;
-		$_test_conditional_tags       = array();
-		$_test_is_block_theme         = false;
+		$_test_conditional_tags      = array();
+		$_test_is_block_theme        = false;
 	}
 
 	#[DataProvider( 'rangeProvider' )]
@@ -207,6 +207,7 @@ class HolidayModeTest extends TestCase {
 	 * Both functions are hooked into the same 'init' action (migration at
 	 * priority 5, the activation logic at priority 10), so calling them in
 	 * this order faithfully simulates a single real WordPress request.
+	 *
 	 * @throws DateMalformedStringException
 	 */
 	public function testMigratedHolidayModeActivatesOnTheVeryFirstRequest(): void {
@@ -309,6 +310,7 @@ class HolidayModeTest extends TestCase {
 	 * variations "Add to cart" button independently of the
 	 * woocommerce_is_purchasable filter (purchasability is only enforced
 	 * client-side, per selected variation), so it must be removed explicitly.
+	 *
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
@@ -334,6 +336,7 @@ class HolidayModeTest extends TestCase {
 	 * the "Buy product" button as soon as an add-to-cart URL is set,
 	 * independently of the woocommerce_is_purchasable filter, so it must be
 	 * removed explicitly.
+	 *
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
@@ -358,6 +361,7 @@ class HolidayModeTest extends TestCase {
 	 * Regression test: grouped products list each child product's own
 	 * add-to-cart control the same way, independently of the
 	 * woocommerce_is_purchasable filter, so it must be removed explicitly.
+	 *
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
@@ -384,6 +388,7 @@ class HolidayModeTest extends TestCase {
 	 * The woocommerce_before_single_product fallback hook (added for classic
 	 * themes that don't call woocommerce_before_main_content on the single
 	 * product page) must therefore be registered unconditionally.
+	 *
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
@@ -404,6 +409,7 @@ class HolidayModeTest extends TestCase {
 	 * Purchasing must be disabled by default (backwards compatible with
 	 * previous plugin versions, where this was not yet configurable), even
 	 * when the "hmfw_disable_purchasing" option has never been saved.
+	 *
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
@@ -423,6 +429,7 @@ class HolidayModeTest extends TestCase {
 	/**
 	 * Merchants who only want the holiday notice, without actually blocking
 	 * purchases, can opt out via the "hmfw_disable_purchasing" checkbox.
+	 *
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
@@ -472,6 +479,7 @@ class HolidayModeTest extends TestCase {
 	 * the Site Editor to use native blocks instead of the "Legacy Template"
 	 * block never fire woocommerce_before_main_content, so the wp_body_open
 	 * fallback must register and print the notice on its own.
+	 *
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
@@ -497,6 +505,7 @@ class HolidayModeTest extends TestCase {
 	 * template (e.g. below the archive title/result count on WooCommerce's
 	 * default Shop template), instead of at the very top of the page. Block
 	 * themes must therefore rely exclusively on wp_body_open.
+	 *
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException
 	 * @throws DateMalformedStringException

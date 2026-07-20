@@ -30,7 +30,7 @@ class HMFWSettingsTest extends TestCase {
 		parent::setUp();
 
 		global $wp_filter, $_test_options;
-		$wp_filter    = array();
+		$wp_filter     = array();
 		$_test_options = array();
 
 		WC_Admin_Settings::$errors = array();

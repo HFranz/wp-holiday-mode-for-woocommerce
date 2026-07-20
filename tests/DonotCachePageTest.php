@@ -78,4 +78,3 @@ class DonotCachePageTest extends TestCase {
 		$this->assertFalse( DONOTCACHEPAGE, 'An already-defined DONOTCACHEPAGE constant must be left untouched.' );
 	}
 }
-

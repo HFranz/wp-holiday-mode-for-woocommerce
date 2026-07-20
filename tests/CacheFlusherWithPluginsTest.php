@@ -156,4 +156,3 @@ namespace Hfranz\WpHolidayModeForWoocommerce\Tests {
 		}
 	}
 }
-

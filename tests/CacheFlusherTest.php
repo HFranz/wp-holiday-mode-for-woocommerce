@@ -85,6 +85,3 @@ class CacheFlusherTest extends TestCase {
 		$this->assertTrue( $called, 'litespeed_purge_all was not triggered even though something was hooked into it.' );
 	}
 }
-
-
-
