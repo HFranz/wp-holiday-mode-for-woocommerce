@@ -2,7 +2,7 @@
 Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.0
-Tested up to: 7.1
+Tested up to: 7.2
 Stable tag: 2.6.0
 Requires PHP: 8.0
 Donate link: https://sevmatic.com/
