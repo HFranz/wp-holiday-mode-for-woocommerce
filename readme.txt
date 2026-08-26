@@ -42,9 +42,11 @@ Go to WooCommerce -> Settings -> Holiday Mode to configure your settings
 
 = Does this work with a headless/decoupled storefront (e.g. a custom app built on the WooCommerce Store API)? =
 
-Yes. New orders are blocked the same way for headless storefronts as for a regular WordPress theme: products become non-purchasable and adding to cart or checking out is rejected while Holiday Mode is active.
+Yes. New orders are blocked the same way for headless storefronts as for a regular WordPress theme: products become non-purchasable and adding to cart or checking out is rejected while Holiday Mode is active. Your frontend can also ask the WooCommerce Store API directly whether Holiday Mode is active and what your absence message is, so it can be displayed even though it never renders any WordPress page. No setup is required for this - it is available as soon as the plugin is active, using your existing Holiday Mode settings.
 
-In addition, your frontend can ask the WooCommerce Store API directly whether Holiday Mode is active and what your absence message is, so it can be displayed even though it never renders any WordPress page. This information is included automatically in the Cart and Checkout endpoint responses (`/wc/store/v1/cart` and `/wc/store/v1/checkout`), under `extensions.holiday-mode-woocommerce`:
+= (For developers) What does the Store API extension data look like? =
+
+Holiday Mode is included automatically in the Cart and Checkout endpoint responses (`/wc/store/v1/cart` and `/wc/store/v1/checkout`), under `extensions.holiday-mode-woocommerce`:
 
 `
 {
@@ -54,8 +56,6 @@ In addition, your frontend can ask the WooCommerce Store API directly whether Ho
   "notice_type": "error"
 }
 `
-
-No setup is required for this - it is available as soon as the plugin is active, using your existing Holiday Mode settings.
 
 == Privacy Disclosure ==
 
