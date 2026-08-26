@@ -45,13 +45,29 @@ class HookRegistrationTest extends TestCase {
 	}
 
 	/**
+	 * The Store API extension data (holiday notice + purchasing state for
+	 * headless frontends and the Cart/Checkout blocks) must be registered on
+	 * 'woocommerce_blocks_loaded', the hook WooCommerce Blocks documents for
+	 * extending Store API schemas.
+	 */
+	public function testStoreApiExtensionIsHookedOnBlocksLoaded(): void {
+		global $wp_filter;
+
+		$this->assertArrayHasKey( 'woocommerce_blocks_loaded', $wp_filter, 'Nothing is hooked into woocommerce_blocks_loaded at all.' );
+
+		$priority = $this->findPriority( $wp_filter['woocommerce_blocks_loaded'], array( 'HMFW_Store_Api', 'init' ) );
+
+		$this->assertNotNull( $priority, 'HMFW_Store_Api::init() is not hooked into woocommerce_blocks_loaded.' );
+	}
+
+	/**
 	 * Find the registered priority of a callback for a given hook.
 	 *
 	 * @param array<int, array{function: mixed, priority: int}> $callbacks Registered callbacks for a hook.
-	 * @param string                                            $function_name Name of the callback function to find.
+	 * @param callable-string|array                             $function_name Name (or [class, method] callback) to find.
 	 * @return int|null The registered priority, or null if not found.
 	 */
-	private function findPriority( array $callbacks, string $function_name ): ?int {
+	private function findPriority( array $callbacks, string|array $function_name ): ?int {
 		foreach ( $callbacks as $callback ) {
 			if ( $callback['function'] === $function_name ) {
 				return $callback['priority'];

@@ -15,7 +15,7 @@
  * Plugin Name:       Holiday Mode for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/holiday-mode-for-woocommerce/
  * Description:       Set your WooCommerce® shop to holiday or vacation mode with ease.
- * Version:           2.5.0
+ * Version:           2.6.0
  * Author:            Heinrich Franz
  * Author URI:        https://sevmatic/?source=wordpress
  * License:           GPL-2.0+
@@ -39,11 +39,12 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'HMFW_VERSION', '2.5.0' );
+define( 'HMFW_VERSION', '2.6.0' );
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-hmfw-cache-flusher.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/class-hmfw-store-api.php';
 
 add_action( 'init', 'hmfw_load_textdomain' );
 /**
@@ -66,6 +67,8 @@ function hmfw_declare_wc_compatibility(): void {
 	FeaturesUtil::declare_compatibility( 'custom_order_tables', __FILE__, true );
 	FeaturesUtil::declare_compatibility( 'cart_checkout_blocks', __FILE__, true );
 }
+
+add_action( 'woocommerce_blocks_loaded', array( 'HMFW_Store_Api', 'init' ) );
 
 add_filter( 'woocommerce_get_settings_pages', 'hmfw_add_settings_page' );
 /**
@@ -189,6 +192,23 @@ function hmfw_migrate_customizer_settings(): void {
 	update_option( 'hmfw_version', HMFW_VERSION );
 }
 
+/**
+ * Check whether Holiday Mode is currently active, i.e. WooCommerce is
+ * available, the merchant enabled it, and today falls within the configured
+ * date range. Shared between the classic/block-theme activation below and
+ * HMFW_Store_Api, which exposes the same state to headless frontends and the
+ * Cart/Checkout blocks via the WooCommerce Store API.
+ *
+ * @return bool True if Holiday Mode is currently in effect.
+ */
+function hmfw_is_holiday_mode_active(): bool {
+	if ( hmfw_is_woocommerce_not_available() || 'yes' !== get_option( 'hmfw_holiday_status', 'no' ) ) {
+		return false;
+	}
+
+	return hmfw_check_in_range( get_option( 'hmfw_holiday_startdate' ), get_option( 'hmfw_holiday_enddate' ) );
+}
+
 // Runs after hmfw_migrate_customizer_settings() (priority 5) on the same 'init' hook,
 // so freshly migrated options are already available on the very first request.
 add_action( 'init', 'hmfw_woocommerce_holiday_mode', 10 );
@@ -204,11 +224,7 @@ add_action( 'init', 'hmfw_woocommerce_holiday_mode', 10 );
  * correctly, without ever serving stale cached output.
  */
 function hmfw_woocommerce_holiday_mode(): void {
-	if ( hmfw_is_woocommerce_not_available() || 'yes' !== get_option( 'hmfw_holiday_status', 'no' ) ) {
-		return;
-	}
-
-	if ( ! hmfw_check_in_range( get_option( 'hmfw_holiday_startdate' ), get_option( 'hmfw_holiday_enddate' ) ) ) {
+	if ( ! hmfw_is_holiday_mode_active() ) {
 		return;
 	}
 

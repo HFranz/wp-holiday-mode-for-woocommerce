@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.0
 Tested up to: 7.1
-Stable tag: 2.5.0
+Stable tag: 2.6.0
 Requires PHP: 8.0
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -25,6 +25,7 @@ Features:
 - **Display a prominent custom absence message** to inform customers about your temporary closure
 - **Schedule holiday mode with a specific start and end date**
 - **Automatically deactivate holiday mode when the vacation period ends**
+- **Works with headless/decoupled storefronts** and the Cart & Checkout blocks, via the WooCommerce Store API
 
 WooCommerce® is a registered trademark of Automattic Inc.
 
@@ -35,6 +36,25 @@ Follow these steps to install and configure the plugin:
 Upload the plugin folder to the /wp-content/plugins/ directory
 Activate the plugin through the "Plugins" menu in WordPress
 Go to WooCommerce -> Settings -> Holiday Mode to configure your settings
+
+== Frequently Asked Questions ==
+
+= Does this work with a headless/decoupled storefront (e.g. a custom app built on the WooCommerce Store API)? =
+
+Yes. New orders are blocked the same way for headless storefronts as for a regular WordPress theme: products become non-purchasable and adding to cart or checking out is rejected while Holiday Mode is active.
+
+In addition, your frontend can ask the WooCommerce Store API directly whether Holiday Mode is active and what your absence message is, so it can be displayed even though it never renders any WordPress page. This information is included automatically in the Cart and Checkout endpoint responses (`/wc/store/v1/cart` and `/wc/store/v1/checkout`), under `extensions.holiday-mode-woocommerce`:
+
+`
+{
+  "active": true,
+  "purchasing_disabled": true,
+  "message": "We are on vacation, back on 1 September.",
+  "notice_type": "error"
+}
+`
+
+No setup is required for this - it is available as soon as the plugin is active, using your existing Holiday Mode settings.
 
 == Privacy Disclosure ==
 
@@ -47,6 +67,9 @@ screenshot-3.png
 screenshot-4.png
 
 == Changelog ==
+
+= 2.6.0 =
+* New: Holiday Mode status and your absence message are now exposed through the WooCommerce Store API, so headless/decoupled storefronts and the Cart & Checkout blocks can display them.
 
 = 2.5.0 =
 * Lower the minimum required PHP version to 8.0 to support websites still running PHP 8.0–8.3.
