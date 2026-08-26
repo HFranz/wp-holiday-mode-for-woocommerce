@@ -20,6 +20,7 @@ use function has_action;
 use function has_filter;
 use function hmfw_check_in_range;
 use function hmfw_declare_wc_compatibility;
+use function hmfw_holiday_mode_active_notice;
 use function hmfw_migrate_after_plugin_update;
 use function hmfw_migrate_customizer_settings;
 use function hmfw_plugin_action_links;
@@ -41,6 +42,7 @@ use function wp_timezone;
 #[CoversFunction( 'hmfw_woocommerce_holiday_mode' )]
 #[CoversFunction( 'hmfw_plugin_action_links' )]
 #[CoversFunction( 'hmfw_wc_missing_notice' )]
+#[CoversFunction( 'hmfw_holiday_mode_active_notice' )]
 class HolidayModeTest extends TestCase {
 
 	protected function setUp(): void {
@@ -576,5 +578,28 @@ class HolidayModeTest extends TestCase {
 	public function testWcMissingNoticeDoesNotThrow(): void {
 		$this->expectNotToPerformAssertions();
 		hmfw_wc_missing_notice();
+	}
+
+	public function testHolidayModeActiveNoticeIsPrintedWhileActive(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '-1 day' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+1 day' ) ) );
+
+		ob_start();
+		hmfw_holiday_mode_active_notice();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'notice-warning', $output );
+		$this->assertStringContainsString( 'wc-settings&tab=holiday_mode', $output );
+	}
+
+	public function testHolidayModeActiveNoticeIsSilentWhenInactive(): void {
+		update_option( 'hmfw_holiday_status', 'no' );
+
+		ob_start();
+		hmfw_holiday_mode_active_notice();
+		$output = ob_get_clean();
+
+		$this->assertSame( '', $output );
 	}
 }

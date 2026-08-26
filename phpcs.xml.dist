@@ -46,5 +46,15 @@
 	<rule ref="WordPress.Files.FileName">
 		<exclude-pattern>tests/*</exclude-pattern>
 	</rule>
+
+	<!-- manage_woocommerce is a real, standard WooCommerce capability (not a -->
+	<!-- typo) - WPCS only recognizes WordPress core capabilities out of the box. -->
+	<rule ref="WordPress.WP.Capabilities">
+		<properties>
+			<property name="custom_capabilities" type="array">
+				<element value="manage_woocommerce"/>
+			</property>
+		</properties>
+	</rule>
 </ruleset>
 

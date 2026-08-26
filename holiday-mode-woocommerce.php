@@ -15,7 +15,7 @@
  * Plugin Name:       Holiday Mode for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/holiday-mode-for-woocommerce/
  * Description:       Set your WooCommerce® shop to holiday or vacation mode with ease.
- * Version:           2.6.0
+ * Version:           2.7.0
  * Author:            Heinrich Franz
  * Author URI:        https://sevmatic/?source=wordpress
  * License:           GPL-2.0+
@@ -39,7 +39,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'HMFW_VERSION', '2.6.0' );
+define( 'HMFW_VERSION', '2.7.0' );
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
@@ -374,6 +374,37 @@ function hmfw_wc_missing_notice(): void {
 			__( '<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active.', 'holiday-mode-woocommerce' )
 		)
 	);
+}
+
+add_action( 'admin_notices', 'hmfw_holiday_mode_active_notice' );
+/**
+ * Show an admin notice on every wp-admin screen while Holiday Mode is
+ * active, so merchants don't forget the shop is currently closed to new
+ * orders. Intentionally not dismissible: it should keep reappearing on
+ * every page load for as long as Holiday Mode actually is active, the same
+ * way the holiday notice itself keeps showing to shoppers.
+ */
+function hmfw_holiday_mode_active_notice(): void {
+	if ( ! current_user_can( 'manage_woocommerce' ) || ! hmfw_is_holiday_mode_active() ) {
+		return;
+	}
+
+	printf(
+		'<div class="notice notice-warning"><p>%s</p></div>',
+		wp_kses(
+			sprintf(
+				/* translators: %s: link to the Holiday Mode settings page */
+				__( '<strong>Holiday Mode</strong> is currently active - your shop is closed to new orders. %s', 'holiday-mode-woocommerce' ),
+				'<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=holiday_mode' ) ) . '">' . esc_html__( 'Manage Holiday Mode settings', 'holiday-mode-woocommerce' ) . '</a>'
+			),
+			array(
+				'strong' => array(),
+				'a'      => array(
+					'href' => array(),
+				),
+			)
+		)
+	); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 add_action( 'woocommerce_settings_saved', 'hmfw_maybe_flush_cache_on_settings_save' );
