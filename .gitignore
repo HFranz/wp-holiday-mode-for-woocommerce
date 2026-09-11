@@ -4,3 +4,4 @@
 /vendor/
 /.phpunit.cache/test-results
 CLAUDE.md
+/.phpunit.cache/test-run-history
