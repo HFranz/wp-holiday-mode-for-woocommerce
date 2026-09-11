@@ -24,6 +24,7 @@ use function hmfw_holiday_mode_active_notice;
 use function hmfw_migrate_after_plugin_update;
 use function hmfw_migrate_customizer_settings;
 use function hmfw_plugin_action_links;
+use function hmfw_plugin_row_meta;
 use function hmfw_wc_missing_notice;
 use function hmfw_wc_shop_disabled;
 use function hmfw_wc_shop_disabled_body_open_fallback;
@@ -41,6 +42,7 @@ use function wp_timezone;
 #[CoversFunction( 'hmfw_migrate_after_plugin_update' )]
 #[CoversFunction( 'hmfw_woocommerce_holiday_mode' )]
 #[CoversFunction( 'hmfw_plugin_action_links' )]
+#[CoversFunction( 'hmfw_plugin_row_meta' )]
 #[CoversFunction( 'hmfw_wc_missing_notice' )]
 #[CoversFunction( 'hmfw_holiday_mode_active_notice' )]
 class HolidayModeTest extends TestCase {
@@ -584,6 +586,23 @@ class HolidayModeTest extends TestCase {
 
 		$this->assertStringContainsString( 'wc-settings&tab=holiday_mode', $links[0] );
 		$this->assertArrayHasKey( 'deactivate', $links );
+	}
+
+	public function testPluginRowMetaAddsSupportAndRatingLinks(): void {
+		$file = plugin_basename( dirname( __DIR__ ) . '/holiday-mode-woocommerce.php' );
+
+		$links = hmfw_plugin_row_meta( array( 'Visit plugin site' ), $file );
+
+		$this->assertCount( 3, $links );
+		$this->assertStringContainsString( 'wordpress.org/support/plugin/holiday-mode-for-woocommerce/reviews', $links[1] );
+		$this->assertStringContainsString( 'wordpress.org/support/plugin/holiday-mode-for-woocommerce/', $links[2] );
+		$this->assertStringContainsString( 'Support', $links[2] );
+	}
+
+	public function testPluginRowMetaLeavesOtherPluginsUnaffected(): void {
+		$links = hmfw_plugin_row_meta( array( 'Visit plugin site' ), 'some-other-plugin/some-other-plugin.php' );
+
+		$this->assertSame( array( 'Visit plugin site' ), $links );
 	}
 
 	public function testWcMissingNoticeDoesNotThrow(): void {

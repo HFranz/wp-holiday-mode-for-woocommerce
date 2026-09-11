@@ -100,6 +100,25 @@ function hmfw_plugin_action_links( $links ): array {
 	return $links;
 }
 
+add_filter( 'plugin_row_meta', 'hmfw_plugin_row_meta', 10, 2 );
+/**
+ * Adds "Support" and rating links to the plugin's row on the Plugins list page.
+ *
+ * @param array<int, string> $links Existing row meta links.
+ * @param string             $file  Plugin basename of the plugin the row meta is for.
+ * @return array<int, string>
+ */
+function hmfw_plugin_row_meta( array $links, string $file ): array {
+	if ( plugin_basename( __FILE__ ) !== $file ) {
+		return $links;
+	}
+
+	$links[] = '<a href="' . esc_url( 'https://wordpress.org/support/plugin/holiday-mode-for-woocommerce/reviews/?rate=5#new-post' ) . '" target="_blank" rel="noopener noreferrer" style="color:#ffb900;font-size:20px;text-decoration:none;">★★★★★</a>';
+	$links[] = '<a href="' . esc_url( 'https://wordpress.org/support/plugin/holiday-mode-for-woocommerce/' ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Support', 'holiday-mode-for-woocommerce' ) . '</a>';
+
+	return $links;
+}
+
 /**
  * One-time migration of settings that used to live in the Customizer (theme mods)
  * into normal WordPress options, managed by the new WooCommerce settings page.
