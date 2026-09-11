@@ -284,18 +284,29 @@ function hmfw_woocommerce_holiday_mode(): void {
 	// this for block themes (template-canvas.php), and it is standard
 	// practice in classic theme header.php files since WP 5.2. hmfw_wc_shop_disabled()
 	// already guards against printing twice, so this is a no-op wherever a
-	// classic hook already handled the notice.
+	// classic hook already handled the notice. It is also the only hook that
+	// ever fires on non-WooCommerce pages, so it doubles as the mechanism
+	// behind the "Show on all pages" setting - see the page-type guard inside
+	// hmfw_wc_shop_disabled_body_open_fallback().
 	add_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' );
 }
 
 /**
- * Print the holiday notice right after the opening <body> tag, but only on
- * the pages Holiday Mode actually affects. Acts as a safety net for block
- * themes whose templates don't fire the classic WooCommerce content hooks
- * (see registration above).
+ * Print the holiday notice right after the opening <body> tag. Acts as a
+ * safety net for block themes whose templates don't fire the classic
+ * WooCommerce content hooks (see registration above), and - when the
+ * "Show on all pages" setting is enabled - as the actual mechanism for
+ * printing the notice on non-WooCommerce pages, since those never fire any
+ * WooCommerce content hook to begin with.
+ *
+ * Restricted to the shop, product, cart and checkout pages unless "Show on
+ * all pages" is enabled, matching Holiday Mode's historical, WooCommerce-only
+ * behaviour by default.
  */
 function hmfw_wc_shop_disabled_body_open_fallback(): void {
-	if ( ! is_shop() && ! is_product_taxonomy() && ! is_product() && ! is_cart() && ! is_checkout() ) {
+	$show_on_all_pages = 'yes' === get_option( 'hmfw_notice_all_pages', 'no' );
+
+	if ( ! $show_on_all_pages && ! is_shop() && ! is_product_taxonomy() && ! is_product() && ! is_cart() && ! is_checkout() ) {
 		return;
 	}
 

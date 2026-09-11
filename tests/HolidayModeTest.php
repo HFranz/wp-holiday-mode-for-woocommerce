@@ -568,6 +568,17 @@ class HolidayModeTest extends TestCase {
 		$this->assertSame( '', $output );
 	}
 
+	public function testFooterFallbackPrintsNoticeOnAllPagesWhenEnabled(): void {
+		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
+		update_option( 'hmfw_notice_all_pages', 'yes' );
+
+		ob_start();
+		hmfw_wc_shop_disabled_body_open_fallback();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'We are on vacation.', $output );
+	}
+
 	public function testPluginActionLinksAddsSettingsLink(): void {
 		$links = hmfw_plugin_action_links( array( 'deactivate' => 'Deactivate' ) );
 

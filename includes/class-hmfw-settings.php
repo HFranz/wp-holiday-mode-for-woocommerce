@@ -90,6 +90,14 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 					),
 				),
 				array(
+					'title'    => __( 'Show on all pages', 'holiday-mode-for-woocommerce' ),
+					'desc'     => __( 'Show the holiday notice on every page of your site.', 'holiday-mode-for-woocommerce' ),
+					'desc_tip' => __( 'By default, the notice only appears on the shop, product, cart and checkout pages. Enable this to also show it on every other page of your site.', 'holiday-mode-for-woocommerce' ),
+					'id'       => 'hmfw_notice_all_pages',
+					'type'     => 'checkbox',
+					'default'  => 'no',
+				),
+				array(
 					'title'             => __( 'Vacation message', 'holiday-mode-for-woocommerce' ),
 					'desc_tip'          => __( 'Enter your Holiday message here.', 'holiday-mode-for-woocommerce' ),
 					'id'                => 'hmfw_holiday_message',

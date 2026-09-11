@@ -23,6 +23,7 @@ Features:
 - **Disable the shopping cart** (existing cart items will be removed when holiday mode is activated)
 - **Disable checkout** during the holiday period
 - **Display a prominent custom absence message** to inform customers about your temporary closure
+- **Optionally show the absence message on every page**, not just the shop, product, cart and checkout pages
 - **Schedule holiday mode with a specific start and end date**
 - **Automatically deactivate holiday mode when the vacation period ends**
 - **Works with headless/decoupled storefronts** and the Cart & Checkout blocks, via the WooCommerce Store API
