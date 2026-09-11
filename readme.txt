@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, settings, calendar, vacation
 Requires at least: 6.0
 Tested up to: 7.2
-Stable tag: 2.7.0
+Stable tag: 2.8.0
 Requires PHP: 8.0
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -69,6 +69,10 @@ screenshot-3.png
 screenshot-4.png
 
 == Changelog ==
+
+= 2.8.0 =
+* New: "Show on all pages" setting displays the holiday notice on every page of your site, not just the shop, product, cart and checkout pages.
+* Fixed: Corrected the plugin's text domain to match its wordpress.org slug, so translations load correctly.
 
 = 2.7.0 =
 * New: Admin notice reminding you that Holiday Mode is currently active, shown throughout wp-admin so it's harder to forget your shop is closed.
