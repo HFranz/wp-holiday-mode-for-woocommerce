@@ -20,8 +20,7 @@
  * Author URI:        https://sevmatic/?source=wordpress
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       holiday-mode-woocommerce
- * Domain Path:       /languages
+ * Text Domain:       holiday-mode-for-woocommerce
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Requires Plugins:  woocommerce
@@ -51,7 +50,7 @@ add_action( 'init', 'hmfw_load_textdomain' );
  * Load the plugin's translations.
  */
 function hmfw_load_textdomain(): void {
-	load_plugin_textdomain( 'holiday-mode-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'holiday-mode-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 
 add_action( 'before_woocommerce_init', 'hmfw_declare_wc_compatibility' );
@@ -95,7 +94,7 @@ function hmfw_plugin_action_links( $links ): array {
 		return $links;
 	}
 
-	$settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=holiday_mode' ) ) . '">' . esc_html__( 'Settings', 'holiday-mode-woocommerce' ) . '</a>';
+	$settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=holiday_mode' ) ) . '">' . esc_html__( 'Settings', 'holiday-mode-for-woocommerce' ) . '</a>';
 	array_unshift( $links, $settings_link );
 
 	return $links;
@@ -371,7 +370,7 @@ function hmfw_wc_missing_notice(): void {
 	printf(
 		'<div class="notice notice-error"><p>%s</p></div>',
 		wp_kses_post(
-			__( '<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active.', 'holiday-mode-woocommerce' )
+			__( '<strong>Holiday Mode for WooCommerce</strong> requires WooCommerce to be installed and active.', 'holiday-mode-for-woocommerce' )
 		)
 	);
 }
@@ -394,8 +393,8 @@ function hmfw_holiday_mode_active_notice(): void {
 		wp_kses(
 			sprintf(
 				/* translators: %s: link to the Holiday Mode settings page */
-				__( '<strong>Holiday Mode</strong> is currently active - your shop is closed to new orders. %s', 'holiday-mode-woocommerce' ),
-				'<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=holiday_mode' ) ) . '">' . esc_html__( 'Manage Holiday Mode settings', 'holiday-mode-woocommerce' ) . '</a>'
+				__( '<strong>Holiday Mode</strong> is currently active - your shop is closed to new orders. %s', 'holiday-mode-for-woocommerce' ),
+				'<a href="' . esc_url( admin_url( 'admin.php?page=wc-settings&tab=holiday_mode' ) ) . '">' . esc_html__( 'Manage Holiday Mode settings', 'holiday-mode-for-woocommerce' ) . '</a>'
 			),
 			array(
 				'strong' => array(),

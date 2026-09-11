@@ -77,25 +77,25 @@ if ( ! class_exists( 'HMFW_Store_Api' ) ) :
 		public static function get_schema(): array {
 			return array(
 				'active'              => array(
-					'description' => __( 'Whether Holiday Mode is currently active.', 'holiday-mode-woocommerce' ),
+					'description' => __( 'Whether Holiday Mode is currently active.', 'holiday-mode-for-woocommerce' ),
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
 				'purchasing_disabled' => array(
-					'description' => __( 'Whether Holiday Mode is currently blocking new orders.', 'holiday-mode-woocommerce' ),
+					'description' => __( 'Whether Holiday Mode is currently blocking new orders.', 'holiday-mode-for-woocommerce' ),
 					'type'        => 'boolean',
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
 				'message'             => array(
-					'description' => __( 'The holiday absence message to display to shoppers. Empty unless Holiday Mode is active.', 'holiday-mode-woocommerce' ),
+					'description' => __( 'The holiday absence message to display to shoppers. Empty unless Holiday Mode is active.', 'holiday-mode-for-woocommerce' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
 				),
 				'notice_type'         => array(
-					'description' => __( 'Visual style of the holiday notice: "error" (red) or "notice" (blue).', 'holiday-mode-woocommerce' ),
+					'description' => __( 'Visual style of the holiday notice: "error" (red) or "notice" (blue).', 'holiday-mode-for-woocommerce' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,

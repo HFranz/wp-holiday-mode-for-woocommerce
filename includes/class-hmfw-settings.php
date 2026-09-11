@@ -22,7 +22,7 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 		 */
 		public function __construct() {
 			$this->id    = 'holiday_mode';
-			$this->label = __( 'Holiday Mode', 'holiday-mode-woocommerce' );
+			$this->label = __( 'Holiday Mode', 'holiday-mode-for-woocommerce' );
 
 			parent::__construct();
 
@@ -39,63 +39,63 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 		public function get_settings( $current_section = '' ): array {
 			$settings = array(
 				array(
-					'title' => __( 'Holiday Mode Settings', 'holiday-mode-woocommerce' ),
+					'title' => __( 'Holiday Mode Settings', 'holiday-mode-for-woocommerce' ),
 					'type'  => 'title',
 					'id'    => 'hmfw_settings_title',
-					'desc'  => __( 'Set your WooCommerce® shop to holiday or vacation mode. Use a date range to schedule closed time.', 'holiday-mode-woocommerce' ),
+					'desc'  => __( 'Set your WooCommerce® shop to holiday or vacation mode. Use a date range to schedule closed time.', 'holiday-mode-for-woocommerce' ),
 				),
 				array(
-					'title'   => __( 'Activate', 'holiday-mode-woocommerce' ),
-					'desc'    => __( 'Activate Holiday Mode', 'holiday-mode-woocommerce' ),
+					'title'   => __( 'Activate', 'holiday-mode-for-woocommerce' ),
+					'desc'    => __( 'Activate Holiday Mode', 'holiday-mode-for-woocommerce' ),
 					'id'      => 'hmfw_holiday_status',
 					'type'    => 'checkbox',
 					'default' => 'no',
 				),
 				array(
-					'title'   => __( 'Disable purchasing', 'holiday-mode-woocommerce' ),
-					'desc'    => __( 'Make all products non-purchasable and remove the add-to-cart buttons while Holiday Mode is active.', 'holiday-mode-woocommerce' ),
+					'title'   => __( 'Disable purchasing', 'holiday-mode-for-woocommerce' ),
+					'desc'    => __( 'Make all products non-purchasable and remove the add-to-cart buttons while Holiday Mode is active.', 'holiday-mode-for-woocommerce' ),
 					'id'      => 'hmfw_disable_purchasing',
 					'type'    => 'checkbox',
 					'default' => 'yes',
 				),
 				array(
-					'title'    => __( 'Start of Holidays', 'holiday-mode-woocommerce' ),
-					'desc_tip' => __( 'Enter first day of Holidays here.', 'holiday-mode-woocommerce' ),
+					'title'    => __( 'Start of Holidays', 'holiday-mode-for-woocommerce' ),
+					'desc_tip' => __( 'Enter first day of Holidays here.', 'holiday-mode-for-woocommerce' ),
 					'id'       => 'hmfw_holiday_startdate',
 					'type'     => 'date',
 				),
 				array(
-					'title'    => __( 'End of Holidays', 'holiday-mode-woocommerce' ),
-					'desc_tip' => __( 'Enter last day of Holidays here.', 'holiday-mode-woocommerce' ),
+					'title'    => __( 'End of Holidays', 'holiday-mode-for-woocommerce' ),
+					'desc_tip' => __( 'Enter last day of Holidays here.', 'holiday-mode-for-woocommerce' ),
 					'id'       => 'hmfw_holiday_enddate',
 					'type'     => 'date',
 				),
 				array(
-					'title'    => __( 'Notice Color', 'holiday-mode-woocommerce' ),
-					'desc_tip' => __( 'Choose the color of the notice box shown for the vacation message.', 'holiday-mode-woocommerce' ),
+					'title'    => __( 'Notice Color', 'holiday-mode-for-woocommerce' ),
+					'desc_tip' => __( 'Choose the color of the notice box shown for the vacation message.', 'holiday-mode-for-woocommerce' ),
 					'id'       => 'hmfw_holiday_notice_type',
 					'type'     => 'hmfw_notice_type',
 					'default'  => 'error',
 					'options'  => array(
 						'error'  => array(
-							'label' => __( 'Red', 'holiday-mode-woocommerce' ),
+							'label' => __( 'Red', 'holiday-mode-for-woocommerce' ),
 							'icon'  => 'dashicons-warning',
 							'color' => '#e2401c',
 						),
 						'notice' => array(
-							'label' => __( 'Blue', 'holiday-mode-woocommerce' ),
+							'label' => __( 'Blue', 'holiday-mode-for-woocommerce' ),
 							'icon'  => 'dashicons-info',
 							'color' => '#1e85be',
 						),
 					),
 				),
 				array(
-					'title'             => __( 'Vacation message', 'holiday-mode-woocommerce' ),
-					'desc_tip'          => __( 'Enter your Holiday message here.', 'holiday-mode-woocommerce' ),
+					'title'             => __( 'Vacation message', 'holiday-mode-for-woocommerce' ),
+					'desc_tip'          => __( 'Enter your Holiday message here.', 'holiday-mode-for-woocommerce' ),
 					'id'                => 'hmfw_holiday_message',
 					'type'              => 'textarea',
 					'css'               => 'width: 100%; height: 100px;',
-					'default'           => __( 'I am on vacation.', 'holiday-mode-woocommerce' ),
+					'default'           => __( 'I am on vacation.', 'holiday-mode-for-woocommerce' ),
 					'sanitize_callback' => 'wp_kses_post',
 				),
 				array(
@@ -140,19 +140,19 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 			$end   = isset( $_POST['hmfw_holiday_enddate'] ) ? sanitize_text_field( wp_unslash( $_POST['hmfw_holiday_enddate'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 			if ( ! $this->is_valid_date( $start ) ) {
-				$errors[] = __( 'Please enter a valid start date to activate Holiday Mode.', 'holiday-mode-woocommerce' );
+				$errors[] = __( 'Please enter a valid start date to activate Holiday Mode.', 'holiday-mode-for-woocommerce' );
 			}
 
 			if ( ! $this->is_valid_date( $end ) ) {
-				$errors[] = __( 'Please enter a valid end date to activate Holiday Mode.', 'holiday-mode-woocommerce' );
+				$errors[] = __( 'Please enter a valid end date to activate Holiday Mode.', 'holiday-mode-for-woocommerce' );
 			} elseif ( $this->is_valid_date( $start ) && strtotime( $end ) < strtotime( $start ) ) {
-				$errors[] = __( 'The end date of Holiday Mode must not be before the start date.', 'holiday-mode-woocommerce' );
+				$errors[] = __( 'The end date of Holiday Mode must not be before the start date.', 'holiday-mode-for-woocommerce' );
 			}
 
 			$message = isset( $_POST['hmfw_holiday_message'] ) ? wp_kses_post( wp_unslash( $_POST['hmfw_holiday_message'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
 
 			if ( '' === trim( wp_strip_all_tags( $message ) ) ) {
-				$errors[] = __( 'Please enter a vacation message to activate Holiday Mode.', 'holiday-mode-woocommerce' );
+				$errors[] = __( 'Please enter a vacation message to activate Holiday Mode.', 'holiday-mode-for-woocommerce' );
 			}
 
 			if ( empty( $errors ) ) {
@@ -235,7 +235,7 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 				wp_kses(
 					sprintf(
 						/* translators: %s: five-star rating link */
-						__( 'If you like Holiday Mode for WooCommerce, please take a moment to leave us a %s rating. Thank you!', 'holiday-mode-woocommerce' ),
+						__( 'If you like Holiday Mode for WooCommerce, please take a moment to leave us a %s rating. Thank you!', 'holiday-mode-for-woocommerce' ),
 						'<a href="https://wordpress.org/support/plugin/holiday-mode-for-woocommerce/reviews/?rate=5#new-post" target="_blank" rel="noopener noreferrer">&#9733;&#9733;&#9733;&#9733;&#9733;</a>'
 					),
 					array(
