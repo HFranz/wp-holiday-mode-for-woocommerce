@@ -1,0 +1,28 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "siteOptions": {
+    "blogname": "Holiday Mode for WooCommerce Preview",
+    "blogdescription": "Preview and test the Holiday Mode for WooCommerce plugin."
+  },
+  "preferredVersions": {
+    "php": "latest",
+    "wp": "latest"
+  },
+  "landingPage": "/wp-admin/admin.php?page=wc-settings&tab=holiday_mode",
+  "login": true,
+  "plugins": [ "woocommerce", "holiday-mode-for-woocommerce" ],
+  "steps": [
+    {
+      "step": "runPHP",
+      "code": "<?php\nrequire_once '/wordpress/wp-load.php';\ndelete_transient( '_wc_activation_redirect' );\n// WooCommerce-Grundeinstellungen\nupdate_option('woocommerce_default_country', 'DE:DE-BW');\nupdate_option('woocommerce_currency', 'EUR');\nupdate_option('woocommerce_calc_taxes', 'no');\nupdate_option('woocommerce_allowed_countries', 'specific');\nupdate_option('woocommerce_specific_allowed_countries', array('DE'));\n\n// WooCommerce-Onboarding als abgeschlossen markieren\n$profile = get_option('woocommerce_onboarding_profile', array());\n$profile['completed'] = true;\n$profile['store_location'] = array(\n    'country' => 'DE',\n    'state'   => 'BW',\n);\nupdate_option('woocommerce_onboarding_profile', $profile);\n\nupdate_option('woocommerce_setup_completed', 'yes');\nupdate_option('woocommerce_admin_install_timestamp', time());\nupdate_option('woocommerce_task_list_hidden', 'yes');\nupdate_option('woocommerce_task_list_complete', array(\n    'setup_store' => true,\n));\n\n// WooCommerce neu initialisieren\nif ( function_exists('WC') ) {\n    WC()->countries = new WC_Countries();\n}\n"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\nrequire_once '/wordpress/wp-load.php';\n\n// -------------------------------------------------\n// Simple Product\n// -------------------------------------------------\n$simple = new WC_Product_Simple();\n$simple->set_name('Simple Product');\n$simple->set_status('publish');\n$simple->set_regular_price('1');\n$simple->save();\n\n// -------------------------------------------------\n// Variable Product\n// -------------------------------------------------\n$attribute = new WC_Product_Attribute();\n$attribute->set_id(0);\n$attribute->set_name('Variation');\n$attribute->set_options(array('A'));\n$attribute->set_visible(true);\n$attribute->set_variation(true);\n\n$variable = new WC_Product_Variable();\n$variable->set_name('Variable Product');\n$variable->set_status('publish');\n$variable->set_attributes(array($attribute));\n$variable_id = $variable->save();\n\n// Variante A\n$variation = new WC_Product_Variation();\n$variation->set_parent_id($variable_id);\n$variation->set_attributes(array(\n    'Variation' => 'A',\n));\n$variation->set_regular_price('1');\n$variation->set_status('publish');\n$variation->save();\n\n// Cache aktualisieren\nWC_Product_Variable::sync($variable_id);\nwc_delete_product_transients($variable_id);\n"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\nrequire_once '/wordpress/wp-load.php';\n\nupdate_option('hmfw_holiday_message', 'Our shop is currently in holiday mode. Orders are temporarily disabled.');\nupdate_option('hmfw_holiday_status', 'yes');\nupdate_option('hmfw_holiday_startdate', '2026-01-01');\nupdate_option('hmfw_holiday_enddate', '2099-01-01');\n"
+    }
+  ]
+}

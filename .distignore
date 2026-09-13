@@ -3,6 +3,7 @@
 /.gitignore
 /.idea
 /.phpunit.cache
+/.wordpress-org
 /tests
 /vendor
 /node_modules
