@@ -25,6 +25,7 @@ Features:
 - **Display a prominent custom absence message** to inform customers about your temporary closure
 - **Optionally show the absence message on every page**, not just the shop, product, cart and checkout pages
 - **Schedule holiday mode with a specific start and end date**
+- **Optional advance-notice period** - show a heads-up message a configurable number of days before the shop closes, so customers can still place orders before purchasing is disabled
 - **Automatically deactivate holiday mode when the vacation period ends**
 - **Works with headless/decoupled storefronts** and the Cart & Checkout blocks, via the WooCommerce Store API
 - **Admin notice** reminding you that Holiday Mode is currently active, shown throughout wp-admin
@@ -49,6 +50,10 @@ Yes, if the "Disable purchasing" setting is enabled. As soon as Holiday Mode bec
 = Does Holiday Mode reactivate my shop automatically once the end date passes? =
 
 Yes. Once today's date is past your configured end date, Holiday Mode stops being active on the next page load - you don't need to log back in and switch it off manually. You can also turn it off early at any time from the settings page.
+
+= Can I warn customers before the shop actually closes? =
+
+Yes. Set "Advance notice" (under WooCommerce -> Settings -> Holiday Mode) to the number of days before your start date you'd like to give customers a heads-up. During that window, a separate, distinctly styled notice is shown - purchasing stays fully enabled until Holiday Mode itself becomes active on the configured start date.
 
 = Will Holiday Mode hide my shop from Google or affect my SEO? =
 
