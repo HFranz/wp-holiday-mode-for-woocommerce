@@ -18,13 +18,16 @@ use function get_option;
 use function get_theme_mod;
 use function has_action;
 use function has_filter;
+use function hmfw_build_upcoming_notice_message;
 use function hmfw_check_in_range;
 use function hmfw_declare_wc_compatibility;
 use function hmfw_holiday_mode_active_notice;
+use function hmfw_is_upcoming_notice_active;
 use function hmfw_migrate_after_plugin_update;
 use function hmfw_migrate_customizer_settings;
 use function hmfw_plugin_action_links;
 use function hmfw_plugin_row_meta;
+use function hmfw_upcoming_closure_notice;
 use function hmfw_wc_missing_notice;
 use function hmfw_wc_shop_disabled;
 use function hmfw_wc_shop_disabled_body_open_fallback;
@@ -41,6 +44,10 @@ use function wp_timezone;
 #[CoversFunction( 'hmfw_migrate_customizer_settings' )]
 #[CoversFunction( 'hmfw_migrate_after_plugin_update' )]
 #[CoversFunction( 'hmfw_woocommerce_holiday_mode' )]
+#[CoversFunction( 'hmfw_register_shop_disabled_notice_hooks' )]
+#[CoversFunction( 'hmfw_upcoming_closure_notice' )]
+#[CoversFunction( 'hmfw_is_upcoming_notice_active' )]
+#[CoversFunction( 'hmfw_build_upcoming_notice_message' )]
 #[CoversFunction( 'hmfw_plugin_action_links' )]
 #[CoversFunction( 'hmfw_plugin_row_meta' )]
 #[CoversFunction( 'hmfw_wc_missing_notice' )]
@@ -92,7 +99,21 @@ class HolidayModeTest extends TestCase {
 		$this->assertFalse( hmfw_is_woocommerce_not_available() );
 	}
 
+	/**
+	 * Put Holiday Mode into the "currently active" state that
+	 * hmfw_wc_shop_disabled() requires to print the closed-shop message
+	 * branch, rather than the advance-notice branch - mirrors how it is
+	 * only ever really invoked, from hooks hmfw_woocommerce_holiday_mode()
+	 * registers while active.
+	 */
+	private function activateHolidayModeDateRange(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '-1 day' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+1 day' ) ) );
+	}
+
 	public function testShopDisabledPrintsCustomMessageWhenSet(): void {
+		$this->activateHolidayModeDateRange();
 		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 
 		ob_start();
@@ -103,6 +124,7 @@ class HolidayModeTest extends TestCase {
 	}
 
 	public function testShopDisabledFallsBackToStoreNoticeWhenMessageEmpty(): void {
+		$this->activateHolidayModeDateRange();
 		update_option( 'woocommerce_demo_store_notice', 'Store notice text' );
 		update_option( 'hmfw_holiday_message', '' );
 
@@ -114,6 +136,7 @@ class HolidayModeTest extends TestCase {
 	}
 
 	public function testShopDisabledUsesErrorNoticeTypeByDefault(): void {
+		$this->activateHolidayModeDateRange();
 		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 
 		ob_start();
@@ -124,6 +147,7 @@ class HolidayModeTest extends TestCase {
 	}
 
 	public function testShopDisabledUsesConfiguredNoticeType(): void {
+		$this->activateHolidayModeDateRange();
 		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 		update_option( 'hmfw_holiday_notice_type', 'notice' );
 
@@ -141,6 +165,7 @@ class HolidayModeTest extends TestCase {
 	 * through unsanitized, and must fall back to 'error' instead.
 	 */
 	public function testShopDisabledFallsBackToErrorForInvalidNoticeType(): void {
+		$this->activateHolidayModeDateRange();
 		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 		update_option( 'hmfw_holiday_notice_type', '"><script>alert(1)</script>' );
 
@@ -150,6 +175,96 @@ class HolidayModeTest extends TestCase {
 
 		$this->assertStringContainsString( 'woocommerce-error', $output );
 		$this->assertStringNotContainsString( '<script>', $output );
+	}
+
+	public function testShopDisabledPrintsUpcomingNoticeWhenNotYetActive(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '+2 days' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+9 days' ) ) );
+		update_option( 'hmfw_upcoming_notice_message', 'Closing soon: {start_date} to {end_date}.' );
+
+		ob_start();
+		hmfw_wc_shop_disabled();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( 'Closing soon:', $output );
+		$this->assertStringContainsString( 'woocommerce-notice', $output );
+		$this->assertStringNotContainsString( 'woocommerce-error', $output );
+	}
+
+	public function testIsUpcomingNoticeActiveIsFalseWithoutLeadDaysConfigured(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '+2 days' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+9 days' ) ) );
+
+		$this->assertFalse( hmfw_is_upcoming_notice_active() );
+	}
+
+	public function testIsUpcomingNoticeActiveWithinConfiguredWindow(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '+2 days' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+9 days' ) ) );
+		update_option( 'hmfw_upcoming_notice_days', 5 );
+
+		$this->assertTrue( hmfw_is_upcoming_notice_active() );
+	}
+
+	public function testIsUpcomingNoticeActiveIsFalseOutsideConfiguredWindow(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '+10 days' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+20 days' ) ) );
+		update_option( 'hmfw_upcoming_notice_days', 3 );
+
+		$this->assertFalse( hmfw_is_upcoming_notice_active() );
+	}
+
+	public function testIsUpcomingNoticeActiveIsFalseOnceHolidayModeIsActive(): void {
+		$this->activateHolidayModeDateRange();
+		update_option( 'hmfw_upcoming_notice_days', 30 );
+
+		$this->assertFalse( hmfw_is_upcoming_notice_active() );
+	}
+
+	public function testBuildUpcomingNoticeMessageReplacesPlaceholders(): void {
+		update_option( 'hmfw_holiday_startdate', '2026-12-24' );
+		update_option( 'hmfw_holiday_enddate', '2027-01-02' );
+		update_option( 'hmfw_upcoming_notice_message', 'Closed from {start_date} until {end_date}.' );
+		update_option( 'date_format', 'Y-m-d' );
+
+		$this->assertSame( 'Closed from 2026-12-24 until 2027-01-02.', hmfw_build_upcoming_notice_message() );
+	}
+
+	/**
+	 * Regression test: the "date_format" option is always set on a real
+	 * WordPress site, but nothing guarantees that in this test environment -
+	 * hmfw_build_upcoming_notice_message() must still fall back to a sane
+	 * default format instead of passing a falsy value to wp_date().
+	 */
+	public function testBuildUpcomingNoticeMessageFallsBackToDefaultDateFormat(): void {
+		update_option( 'hmfw_holiday_startdate', '2026-12-24' );
+		update_option( 'hmfw_holiday_enddate', '2027-01-02' );
+		update_option( 'hmfw_upcoming_notice_message', 'Closed from {start_date} until {end_date}.' );
+
+		$this->assertSame( 'Closed from December 24, 2026 until January 2, 2027.', hmfw_build_upcoming_notice_message() );
+	}
+
+	public function testUpcomingClosureNoticeRegistersShopDisabledHooksWhenActive(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '+2 days' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+9 days' ) ) );
+		update_option( 'hmfw_upcoming_notice_days', 5 );
+
+		hmfw_upcoming_closure_notice();
+
+		$this->assertNotFalse( has_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' ) );
+	}
+
+	public function testUpcomingClosureNoticeDoesNothingWhenNotActive(): void {
+		update_option( 'hmfw_holiday_status', 'no' );
+
+		hmfw_upcoming_closure_notice();
+
+		$this->assertFalse( has_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' ) );
 	}
 
 	public function testDeclareWcCompatibilityDoesNotThrowWhenFeaturesUtilMissing(): void {
@@ -468,6 +583,7 @@ class HolidayModeTest extends TestCase {
 	 * once per request, even when called multiple times.
 	 */
 	public function testShopDisabledOnlyPrintsOncePerRequest(): void {
+		$this->activateHolidayModeDateRange();
 		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 
 		ob_start();
@@ -541,6 +657,7 @@ class HolidayModeTest extends TestCase {
 		global $_test_conditional_tags;
 		$_test_conditional_tags = $conditional_tags;
 
+		$this->activateHolidayModeDateRange();
 		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 
 		ob_start();
@@ -561,6 +678,7 @@ class HolidayModeTest extends TestCase {
 	}
 
 	public function testFooterFallbackDoesNothingOnUnrelatedPages(): void {
+		$this->activateHolidayModeDateRange();
 		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 
 		ob_start();
@@ -571,6 +689,7 @@ class HolidayModeTest extends TestCase {
 	}
 
 	public function testFooterFallbackPrintsNoticeOnAllPagesWhenEnabled(): void {
+		$this->activateHolidayModeDateRange();
 		update_option( 'hmfw_holiday_message', 'We are on vacation.' );
 		update_option( 'hmfw_notice_all_pages', 'yes' );
 

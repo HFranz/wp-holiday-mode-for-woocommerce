@@ -284,20 +284,32 @@ function hmfw_woocommerce_holiday_mode(): void {
 		remove_action( 'woocommerce_grouped_add_to_cart', 'woocommerce_grouped_add_to_cart', 30 );
 	}
 
-	// Block themes (e.g. Twenty Twenty-Five) render the *entire* block
-	// template via get_the_block_template_html() before wp_head()/
-	// wp_body_open() ever fire (see wp-includes/template-canvas.php) - the
-	// classic content hooks below therefore all run during that early,
-	// pre-render pass, in whatever order the blocks happen to appear in the
-	// template. WooCommerce's own default block-based Shop template places
-	// its "Legacy Template" block (which fires woocommerce_before_main_content)
-	// *after* the archive title and result count blocks, so printing there
-	// would put the notice below "Shop / X results", not at the very top of
-	// the page as intended. To guarantee top placement, classic themes keep
-	// using the classic hooks (their natural top-to-bottom render order
-	// already puts wp_body_open first), while block themes rely exclusively
-	// on the wp_body_open hook below, which always executes - and is echoed
-	// - before any block/template output.
+	hmfw_register_shop_disabled_notice_hooks();
+}
+
+/**
+ * Register the hooks that print the shop-disabled notice, shared by
+ * hmfw_woocommerce_holiday_mode() above and hmfw_upcoming_closure_notice()
+ * below - both ultimately print through hmfw_wc_shop_disabled(), which
+ * itself decides the actual message/notice type based on which of the two
+ * states is currently in effect.
+ *
+ * Block themes (e.g. Twenty Twenty-Five) render the *entire* block
+ * template via get_the_block_template_html() before wp_head()/
+ * wp_body_open() ever fire (see wp-includes/template-canvas.php) - the
+ * classic content hooks below therefore all run during that early,
+ * pre-render pass, in whatever order the blocks happen to appear in the
+ * template. WooCommerce's own default block-based Shop template places
+ * its "Legacy Template" block (which fires woocommerce_before_main_content)
+ * *after* the archive title and result count blocks, so printing there
+ * would put the notice below "Shop / X results", not at the very top of
+ * the page as intended. To guarantee top placement, classic themes keep
+ * using the classic hooks (their natural top-to-bottom render order
+ * already puts wp_body_open first), while block themes rely exclusively
+ * on the wp_body_open hook below, which always executes - and is echoed
+ * - before any block/template output.
+ */
+function hmfw_register_shop_disabled_notice_hooks(): void {
 	if ( ! wp_is_block_theme() ) {
 		add_action( 'woocommerce_before_main_content', 'hmfw_wc_shop_disabled', 10 );
 		// Registered unconditionally (not guarded by is_product()): conditional
@@ -321,6 +333,91 @@ function hmfw_woocommerce_holiday_mode(): void {
 	// behind the "Show on all pages" setting - see the page-type guard inside
 	// hmfw_wc_shop_disabled_body_open_fallback().
 	add_action( 'wp_body_open', 'hmfw_wc_shop_disabled_body_open_fallback' );
+}
+
+add_action( 'init', 'hmfw_upcoming_closure_notice', 10 );
+/**
+ * Show a heads-up notice in the days leading up to a scheduled closure (see
+ * hmfw_is_upcoming_notice_active()), so customers get a chance to place
+ * orders before Holiday Mode actually disables purchasing. Independent of
+ * hmfw_woocommerce_holiday_mode() above - the two are mutually exclusive by
+ * construction, since the advance-notice window always ends the day before
+ * Holiday Mode's own start date.
+ *
+ * Sets DONOTCACHEPAGE for the same reason hmfw_woocommerce_holiday_mode()
+ * does: which notice (if any) is shown depends on today's date, so a cached
+ * page could otherwise keep showing yesterday's (non-)notice.
+ */
+function hmfw_upcoming_closure_notice(): void {
+	if ( ! hmfw_is_upcoming_notice_active() ) {
+		return;
+	}
+
+	if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+		define( 'DONOTCACHEPAGE', true );
+	}
+
+	hmfw_register_shop_disabled_notice_hooks();
+}
+
+/**
+ * Check whether the advance-notice period configured via the
+ * "hmfw_upcoming_notice_days" setting is currently in effect, i.e. Holiday
+ * Mode is scheduled (but not active yet - see hmfw_is_holiday_mode_active())
+ * and today falls within the configured number of days before the start date.
+ *
+ * @return bool True if the advance notice should currently be shown.
+ */
+function hmfw_is_upcoming_notice_active(): bool {
+	if ( hmfw_is_woocommerce_not_available() || 'yes' !== get_option( 'hmfw_holiday_status', 'no' ) ) {
+		return false;
+	}
+
+	$lead_days = (int) get_option( 'hmfw_upcoming_notice_days', 0 );
+
+	if ( $lead_days <= 0 ) {
+		return false;
+	}
+
+	try {
+		$start        = new DateTime( get_option( 'hmfw_holiday_startdate' ), wp_timezone() );
+		$window_start = ( clone $start )->modify( "-{$lead_days} days" );
+		$window_end   = ( clone $start )->modify( '-1 day' );
+	} catch ( Exception $e ) {
+		return false;
+	}
+
+	// Always ends the day before the start date, so this can never overlap
+	// with hmfw_is_holiday_mode_active() regardless of how large $lead_days is.
+	return hmfw_check_in_range( $window_start->format( 'Y-m-d' ), $window_end->format( 'Y-m-d' ) );
+}
+
+/**
+ * Build the advance-notice message from the "hmfw_upcoming_notice_message"
+ * setting, replacing the {start_date}/{end_date} placeholders with the
+ * configured dates, formatted using the site's date format setting.
+ *
+ * @return string The advance-notice message with placeholders replaced.
+ */
+function hmfw_build_upcoming_notice_message(): string {
+	$message     = get_option( 'hmfw_upcoming_notice_message', '' );
+	$date_format = get_option( 'date_format', 'F j, Y' );
+
+	if ( '' === $date_format ) {
+		$date_format = 'F j, Y';
+	}
+
+	$start = strtotime( get_option( 'hmfw_holiday_startdate' ) );
+	$end   = strtotime( get_option( 'hmfw_holiday_enddate' ) );
+
+	return str_replace(
+		array( '{start_date}', '{end_date}' ),
+		array(
+			$start ? wp_date( $date_format, $start ) : '',
+			$end ? wp_date( $date_format, $end ) : '',
+		),
+		$message
+	);
 }
 
 /**
@@ -353,6 +450,11 @@ function hmfw_wc_shop_disabled_body_open_fallback(): void {
  * fire for the same page load (the latter is nested inside the former), and
  * this function is hooked into both for theme-compatibility reasons - so
  * without this guard the notice would be duplicated.
+ *
+ * Called both while Holiday Mode is actually active and during the
+ * advance-notice window before it starts (see hmfw_is_upcoming_notice_active()) -
+ * the two states are mutually exclusive by construction, so checking
+ * hmfw_is_holiday_mode_active() here is enough to tell them apart.
  */
 function hmfw_wc_shop_disabled(): void {
 	global $hmfw_notice_already_printed;
@@ -361,13 +463,22 @@ function hmfw_wc_shop_disabled(): void {
 		return;
 	}
 
-	$notice = get_option( 'hmfw_holiday_message' );
+	if ( hmfw_is_holiday_mode_active() ) {
+		$notice = get_option( 'hmfw_holiday_message' );
 
-	if ( '' === $notice ) {
-		$notice = get_option( 'woocommerce_demo_store_notice' );
+		if ( '' === $notice ) {
+			$notice = get_option( 'woocommerce_demo_store_notice' );
+		}
+
+		$notice_type = get_option( 'hmfw_holiday_notice_type', 'error' );
+	} else {
+		// Always the "info" style, deliberately independent of the merchant's
+		// chosen Notice Color above, so customers can tell "closing soon" apart
+		// from "closed" at a glance even if both happen to use the same color.
+		$notice      = hmfw_build_upcoming_notice_message();
+		$notice_type = 'notice';
 	}
 
-	$notice_type = get_option( 'hmfw_holiday_notice_type', 'error' );
 	if ( ! in_array( $notice_type, array( 'error', 'notice' ), true ) ) {
 		$notice_type = 'error';
 	}
