@@ -1,6 +1,6 @@
 === Holiday Mode for WooCommerce ===
 Contributors: hfranz
-Tags: woocommerce, holiday, settings, calendar, vacation
+Tags: woocommerce, holiday, absence, calendar, vacation
 Requires at least: 6.0
 Tested up to: 7.2
 Stable tag: 2.9.0
@@ -28,6 +28,7 @@ Features:
 - **Automatically deactivate holiday mode when the vacation period ends**
 - **Works with headless/decoupled storefronts** and the Cart & Checkout blocks, via the WooCommerce Store API
 - **Admin notice** reminding you that Holiday Mode is currently active, shown throughout wp-admin
+- **Plays nicely with caching plugins** – automatically flushes your page cache when you save your settings, and marks pages as non-cacheable while Holiday Mode is active, so visitors never see a stale, out-of-date version of your shop
 
 WooCommerce® is a registered trademark of Automattic Inc.
 
@@ -40,6 +41,22 @@ Activate the plugin through the "Plugins" menu in WordPress
 Go to WooCommerce -> Settings -> Holiday Mode to configure your settings
 
 == Frequently Asked Questions ==
+
+= Will items already in a customer's cart be removed when Holiday Mode starts? =
+
+Yes, if the "Disable purchasing" setting is enabled. As soon as Holiday Mode becomes active, existing cart contents are removed automatically so nobody can check out with items added before your break started.
+
+= Does Holiday Mode reactivate my shop automatically once the end date passes? =
+
+Yes. Once today's date is past your configured end date, Holiday Mode stops being active on the next page load - you don't need to log back in and switch it off manually. You can also turn it off early at any time from the settings page.
+
+= Will Holiday Mode hide my shop from Google or affect my SEO? =
+
+No. Holiday Mode only disables purchasing and displays your absence message - it doesn't hide pages, add noindex tags, or otherwise change how your site is treated by search engines.
+
+= Does this work with caching plugins like WP Rocket, W3 Total Cache, or LiteSpeed Cache? =
+
+Yes. Saving your Holiday Mode settings automatically flushes the page cache of all major caching plugins (W3 Total Cache, WP Super Cache, WP Rocket, LiteSpeed Cache, WP Fastest Cache, Cache Enabler, Breeze, WP-Optimize, Hummingbird, SiteGround Optimizer, Swift Performance), and pages are marked as non-cacheable for as long as Holiday Mode is active, so visitors always see its current status.
 
 = Does this work with a headless/decoupled storefront (e.g. a custom app built on the WooCommerce Store API)? =
 
@@ -63,10 +80,11 @@ Holiday Mode is included automatically in the Cart and Checkout endpoint respons
 This plugin does not collect, process, or store any personal data.
 
 == Screenshots ==
-screenshot-1.png
-screenshot-2.png
-screenshot-3.png
-screenshot-4.png
+
+1. The custom absence message shown on a product page while Holiday Mode is active - the "Add to cart" button is removed.
+2. The absence message on the shop page - purchasing is disabled for every product while Holiday Mode is active.
+3. The same absence message shown in the "info" notice style, in German - notice color and translations adapt automatically.
+4. The Holiday Mode settings page under WooCommerce -> Settings, where you configure the date range, notice color/icon, and vacation message.
 
 == Changelog ==
 
