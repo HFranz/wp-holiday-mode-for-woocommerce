@@ -98,6 +98,27 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 					'default'  => 'no',
 				),
 				array(
+					'title'             => __( 'Advance notice', 'holiday-mode-for-woocommerce' ),
+					'desc'              => __( 'Show a heads-up notice this many days before the shop closes, so customers can still place orders before Holiday Mode disables purchasing. Set to 0 to disable.', 'holiday-mode-for-woocommerce' ),
+					'id'                => 'hmfw_upcoming_notice_days',
+					'type'              => 'number',
+					'default'           => '0',
+					'custom_attributes' => array(
+						'min'  => '0',
+						'step' => '1',
+					),
+				),
+				array(
+					'title'             => __( 'Advance notice message', 'holiday-mode-for-woocommerce' ),
+					'desc_tip'          => __( 'Shown during the advance notice period configured above. Use {start_date} and {end_date} as placeholders for your configured dates.', 'holiday-mode-for-woocommerce' ),
+					'id'                => 'hmfw_upcoming_notice_message',
+					'type'              => 'textarea',
+					'css'               => 'width: 100%; height: 100px;',
+					/* translators: keep the {start_date} and {end_date} placeholders unchanged - they are replaced with the actual configured dates before display. */
+					'default'           => __( 'Heads up: we will be closed from {start_date} to {end_date}. Please place your orders soon!', 'holiday-mode-for-woocommerce' ),
+					'sanitize_callback' => 'wp_kses_post',
+				),
+				array(
 					'title'             => __( 'Vacation message', 'holiday-mode-for-woocommerce' ),
 					'desc_tip'          => __( 'Enter your Holiday message here.', 'holiday-mode-for-woocommerce' ),
 					'id'                => 'hmfw_holiday_message',

@@ -82,7 +82,35 @@ class HMFWSettingsTest extends TestCase {
 		$this->assertContains( 'hmfw_holiday_startdate', $ids );
 		$this->assertContains( 'hmfw_holiday_enddate', $ids );
 		$this->assertContains( 'hmfw_holiday_notice_type', $ids );
+		$this->assertContains( 'hmfw_upcoming_notice_days', $ids );
+		$this->assertContains( 'hmfw_upcoming_notice_message', $ids );
 		$this->assertContains( 'hmfw_holiday_message', $ids );
+	}
+
+	/**
+	 * The advance-notice lead-time field must be a number input defaulting
+	 * to 0 (disabled), and its message field must be a textarea with a
+	 * default that contains the documented {start_date}/{end_date} placeholders.
+	 */
+	public function testAdvanceNoticeFieldsHaveExpectedTypesAndDefaults(): void {
+		$page     = $this->createSettingsPage();
+		$settings = $page->get_settings();
+
+		$days_field    = current(
+			array_filter( $settings, fn( $field ) => ( $field['id'] ?? '' ) === 'hmfw_upcoming_notice_days' )
+		);
+		$message_field = current(
+			array_filter( $settings, fn( $field ) => ( $field['id'] ?? '' ) === 'hmfw_upcoming_notice_message' )
+		);
+
+		$this->assertNotFalse( $days_field );
+		$this->assertSame( 'number', $days_field['type'] );
+		$this->assertSame( '0', $days_field['default'] );
+
+		$this->assertNotFalse( $message_field );
+		$this->assertSame( 'textarea', $message_field['type'] );
+		$this->assertStringContainsString( '{start_date}', $message_field['default'] );
+		$this->assertStringContainsString( '{end_date}', $message_field['default'] );
 	}
 
 	/**
