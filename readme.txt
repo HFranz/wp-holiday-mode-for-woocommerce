@@ -96,6 +96,7 @@ This plugin does not collect, process, or store any personal data.
 
 = 3.0.0 =
 * New: "Advance notice" setting shows a heads-up message a configurable number of days before the shop closes, so customers can still place orders before purchasing is disabled.
+* New: The vacation message and advance notice message both support {start_date}/{end_date} placeholders, replaced with your configured dates.
 * New: A dismissible admin notice asks for a review once the plugin has been active for two weeks.
 
 = 2.9.0 =
