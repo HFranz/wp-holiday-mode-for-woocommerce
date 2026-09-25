@@ -612,7 +612,7 @@ function hmfw_maybe_review_notice(): void {
 	);
 
 	printf(
-		'<div class="notice notice-info"><p>%s</p><p><a href="%s" class="button button-primary" target="_blank" rel="noopener noreferrer">%s</a> <a href="%s">%s</a></p></div>',
+		'<div class="notice notice-info"><p>%s</p><p><a href="%s" class="button button-primary" style="margin-right: 10px;" target="_blank" rel="noopener noreferrer">%s</a> <a href="%s">%s</a></p></div>',
 		esc_html__( 'Enjoying Holiday Mode for WooCommerce? A quick review helps other merchants find it.', 'holiday-mode-for-woocommerce' ),
 		esc_url( 'https://wordpress.org/support/plugin/holiday-mode-for-woocommerce/reviews/#new-post' ),
 		esc_html__( 'Leave a review', 'holiday-mode-for-woocommerce' ),
