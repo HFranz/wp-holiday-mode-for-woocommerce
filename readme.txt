@@ -3,7 +3,7 @@ Contributors: hfranz
 Tags: woocommerce, holiday, absence, calendar, vacation
 Requires at least: 6.0
 Tested up to: 7.2
-Stable tag: 3.0.0
+Stable tag: 3.1.0
 Requires PHP: 8.0
 Donate link: https://sevmatic.com/
 License: GPLv2 or later
@@ -93,6 +93,9 @@ This plugin does not collect, process, or store any personal data.
 5. The wp-admin Dashboard, showing the "Holiday Mode is currently active" reminder alongside the review-request notice shown to merchants who have used the plugin for a while.
 
 == Changelog ==
+
+= 3.1.0 =
+* Fixed: The review-request notice's "active for two weeks" timer was never started for existing installations updating from an older version, so it would never appear for them. It now also starts on the first admin page load after updating, not just on a fresh activation.
 
 = 3.0.0 =
 * New: "Advance notice" setting shows a heads-up message a configurable number of days before the shop closes, so customers can still place orders before purchasing is disabled.

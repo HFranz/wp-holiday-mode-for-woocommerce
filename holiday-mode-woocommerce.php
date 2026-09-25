@@ -15,7 +15,7 @@
  * Plugin Name:       Holiday Mode for WooCommerce
  * Plugin URI:        https://wordpress.org/plugins/holiday-mode-for-woocommerce/
  * Description:       Set your WooCommerce® shop to holiday or vacation mode with ease.
- * Version:           3.0.0
+ * Version:           3.1.0
  * Author:            Heinrich Franz
  * Author URI:        https://sevmatic/?source=wordpress
  * License:           GPL-2.0+
@@ -38,7 +38,7 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'HMFW_VERSION', '3.0.0' );
+define( 'HMFW_VERSION', '3.1.0' );
 
 use Automattic\WooCommerce\Utilities\FeaturesUtil;
 
