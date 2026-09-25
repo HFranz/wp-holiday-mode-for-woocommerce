@@ -27,6 +27,7 @@ use function hmfw_migrate_after_plugin_update;
 use function hmfw_migrate_customizer_settings;
 use function hmfw_plugin_action_links;
 use function hmfw_plugin_row_meta;
+use function hmfw_replace_date_placeholders;
 use function hmfw_upcoming_closure_notice;
 use function hmfw_wc_missing_notice;
 use function hmfw_wc_shop_disabled;
@@ -35,6 +36,7 @@ use function hmfw_woocommerce_holiday_mode;
 use function plugin_basename;
 use function set_theme_mod;
 use function update_option;
+use function wp_date;
 use function wp_timezone;
 
 #[CoversFunction( 'hmfw_check_in_range' )]
@@ -48,6 +50,7 @@ use function wp_timezone;
 #[CoversFunction( 'hmfw_upcoming_closure_notice' )]
 #[CoversFunction( 'hmfw_is_upcoming_notice_active' )]
 #[CoversFunction( 'hmfw_build_upcoming_notice_message' )]
+#[CoversFunction( 'hmfw_replace_date_placeholders' )]
 #[CoversFunction( 'hmfw_plugin_action_links' )]
 #[CoversFunction( 'hmfw_plugin_row_meta' )]
 #[CoversFunction( 'hmfw_wc_missing_notice' )]
@@ -121,6 +124,49 @@ class HolidayModeTest extends TestCase {
 		$output = ob_get_clean();
 
 		$this->assertStringContainsString( 'We are on vacation.', $output );
+	}
+
+	public function testShopDisabledReplacesDatePlaceholdersInVacationMessage(): void {
+		$this->activateHolidayModeDateRange();
+		update_option( 'hmfw_holiday_message', 'Back on {end_date}.' );
+		update_option( 'date_format', 'Y-m-d' );
+
+		ob_start();
+		hmfw_wc_shop_disabled();
+		$output = ob_get_clean();
+
+		$expected_end_date = wp_date( 'Y-m-d', strtotime( get_option( 'hmfw_holiday_enddate' ) ) );
+
+		$this->assertStringContainsString( "Back on {$expected_end_date}.", $output );
+		$this->assertStringNotContainsString( '{end_date}', $output );
+	}
+
+	/**
+	 * The WooCommerce demo-store-notice fallback is unrelated third-party
+	 * content, not a Holiday Mode message - it must be printed as-is, without
+	 * running it through the placeholder replacement.
+	 */
+	public function testShopDisabledDoesNotReplacePlaceholdersInStoreNoticeFallback(): void {
+		$this->activateHolidayModeDateRange();
+		update_option( 'hmfw_holiday_message', '' );
+		update_option( 'woocommerce_demo_store_notice', 'Store notice with {end_date} literal.' );
+
+		ob_start();
+		hmfw_wc_shop_disabled();
+		$output = ob_get_clean();
+
+		$this->assertStringContainsString( '{end_date}', $output );
+	}
+
+	public function testReplaceDatePlaceholdersSubstitutesBothTokens(): void {
+		update_option( 'hmfw_holiday_startdate', '2026-12-24' );
+		update_option( 'hmfw_holiday_enddate', '2027-01-02' );
+		update_option( 'date_format', 'Y-m-d' );
+
+		$this->assertSame(
+			'From 2026-12-24 to 2027-01-02.',
+			hmfw_replace_date_placeholders( 'From {start_date} to {end_date}.' )
+		);
 	}
 
 	public function testShopDisabledFallsBackToStoreNoticeWhenMessageEmpty(): void {

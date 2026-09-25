@@ -120,7 +120,7 @@ if ( ! class_exists( 'HMFW_Settings' ) ) :
 				),
 				array(
 					'title'             => __( 'Vacation message', 'holiday-mode-for-woocommerce' ),
-					'desc_tip'          => __( 'Enter your Holiday message here.', 'holiday-mode-for-woocommerce' ),
+					'desc_tip'          => __( 'Enter your Holiday message here. You can use {start_date} and {end_date} as placeholders for your configured dates.', 'holiday-mode-for-woocommerce' ),
 					'id'                => 'hmfw_holiday_message',
 					'type'              => 'textarea',
 					'css'               => 'width: 100%; height: 100px;',

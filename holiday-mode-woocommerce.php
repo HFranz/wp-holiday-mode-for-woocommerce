@@ -393,14 +393,17 @@ function hmfw_is_upcoming_notice_active(): bool {
 }
 
 /**
- * Build the advance-notice message from the "hmfw_upcoming_notice_message"
- * setting, replacing the {start_date}/{end_date} placeholders with the
- * configured dates, formatted using the site's date format setting.
+ * Replace the {start_date}/{end_date} placeholders in a message with the
+ * configured Holiday Mode dates, formatted using the site's date format
+ * setting. Shared by the "Vacation message" (hmfw_holiday_message, via
+ * hmfw_wc_shop_disabled()) and the "Advance notice message"
+ * (hmfw_upcoming_notice_message, via hmfw_build_upcoming_notice_message()
+ * below) - both settings document and support the same two placeholders.
  *
- * @return string The advance-notice message with placeholders replaced.
+ * @param string $message Message possibly containing {start_date}/{end_date}.
+ * @return string The message with placeholders replaced.
  */
-function hmfw_build_upcoming_notice_message(): string {
-	$message     = get_option( 'hmfw_upcoming_notice_message', '' );
+function hmfw_replace_date_placeholders( string $message ): string {
 	$date_format = get_option( 'date_format', 'F j, Y' );
 
 	if ( '' === $date_format ) {
@@ -418,6 +421,15 @@ function hmfw_build_upcoming_notice_message(): string {
 		),
 		$message
 	);
+}
+
+/**
+ * Build the advance-notice message from the "hmfw_upcoming_notice_message" setting.
+ *
+ * @return string The advance-notice message with placeholders replaced.
+ */
+function hmfw_build_upcoming_notice_message(): string {
+	return hmfw_replace_date_placeholders( get_option( 'hmfw_upcoming_notice_message', '' ) );
 }
 
 /**
@@ -468,6 +480,8 @@ function hmfw_wc_shop_disabled(): void {
 
 		if ( '' === $notice ) {
 			$notice = get_option( 'woocommerce_demo_store_notice' );
+		} else {
+			$notice = hmfw_replace_date_placeholders( $notice );
 		}
 
 		$notice_type = get_option( 'hmfw_holiday_notice_type', 'error' );

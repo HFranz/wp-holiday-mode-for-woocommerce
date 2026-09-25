@@ -62,6 +62,20 @@ class StoreApiTest extends TestCase {
 		$this->assertSame( 'notice', $data['notice_type'] );
 	}
 
+	public function testActiveMessageReplacesDatePlaceholders(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '-1 day' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+1 day' ) ) );
+		update_option( 'hmfw_holiday_message', 'Back on {end_date}.' );
+		update_option( 'date_format', 'Y-m-d' );
+
+		$data = \HMFW_Store_Api::get_data();
+
+		$expected_end_date = gmdate( 'Y-m-d', strtotime( '+1 day' ) );
+
+		$this->assertSame( "Back on {$expected_end_date}.", $data['message'] );
+	}
+
 	public function testActiveButNoticeOnlyLeavesPurchasingEnabled(): void {
 		update_option( 'hmfw_holiday_status', 'yes' );
 		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '-1 day' ) ) );

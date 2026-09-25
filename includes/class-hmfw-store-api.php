@@ -65,7 +65,7 @@ if ( ! class_exists( 'HMFW_Store_Api' ) ) :
 			return array(
 				'active'              => $active,
 				'purchasing_disabled' => $active && 'yes' === get_option( 'hmfw_disable_purchasing', 'yes' ),
-				'message'             => $active ? wp_kses_post( get_option( 'hmfw_holiday_message', '' ) ) : '',
+				'message'             => $active ? wp_kses_post( hmfw_replace_date_placeholders( get_option( 'hmfw_holiday_message', '' ) ) ) : '',
 				'notice_type'         => get_option( 'hmfw_holiday_notice_type', 'error' ),
 				'upcoming_closure'    => $upcoming,
 				'upcoming_message'    => $upcoming ? wp_kses_post( hmfw_build_upcoming_notice_message() ) : '',
