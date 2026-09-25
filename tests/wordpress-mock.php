@@ -860,11 +860,75 @@ if ( ! function_exists( 'wp_unslash' ) ) {
 }
 
 /**
- * Mock wp_verify_nonce function
+ * Mock wp_verify_nonce function. Unlike the other mocks in this file this
+ * one actually validates (against wp_create_nonce() above) rather than
+ * always returning a fixed value, since hmfw_maybe_dismiss_review_notice()
+ * needs both the success and failure path to be genuinely testable.
  */
 if ( ! function_exists( 'wp_verify_nonce' ) ) {
-	function wp_verify_nonce(): bool {
-		return false;
+	function wp_verify_nonce( $nonce, $action = -1 ): int|false {
+		return hash_equals( wp_create_nonce( $action ), (string) $nonce ) ? 1 : false;
+	}
+}
+
+/**
+ * Mock of WordPress's implicit "current URL" default used by add_query_arg()/
+ * remove_query_arg() when called without an explicit $url argument.
+ */
+if ( ! function_exists( 'hmfw_test_current_url' ) ) {
+	function hmfw_test_current_url(): string {
+		return sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ?? '' ) );
+	}
+}
+
+/**
+ * Mock add_query_arg function
+ */
+if ( ! function_exists( 'add_query_arg' ) ) {
+	function add_query_arg( ...$args ): string {
+		if ( is_array( $args[0] ) ) {
+			$new_args = $args[0];
+			$url      = $args[1] ?? hmfw_test_current_url();
+		} else {
+			$new_args = array( $args[0] => $args[1] ?? '' );
+			$url      = $args[2] ?? hmfw_test_current_url();
+		}
+
+		list( $base, $query ) = array_pad( explode( '?', $url, 2 ), 2, '' );
+		parse_str( $query, $existing_args );
+		$merged_args = array_merge( $existing_args, $new_args );
+
+		return $merged_args ? $base . '?' . http_build_query( $merged_args ) : $base;
+	}
+}
+
+/**
+ * Mock remove_query_arg function
+ */
+if ( ! function_exists( 'remove_query_arg' ) ) {
+	function remove_query_arg( $keys, $query = false ): string {
+		$url = false === $query ? hmfw_test_current_url() : $query;
+
+		list( $base, $query_string ) = array_pad( explode( '?', $url, 2 ), 2, '' );
+		parse_str( $query_string, $remaining_args );
+
+		foreach ( (array) $keys as $key ) {
+			unset( $remaining_args[ $key ] );
+		}
+
+		return $remaining_args ? $base . '?' . http_build_query( $remaining_args ) : $base;
+	}
+}
+
+/**
+ * Mock wp_safe_redirect function. Throws instead of sending headers and
+ * exiting, so hmfw_maybe_dismiss_review_notice() can be unit tested up to
+ * (and including) the redirect without terminating the PHPUnit process -
+ * production code still calls exit right after, as WordPress requires.
+ */
+if ( ! function_exists( 'wp_safe_redirect' ) ) {
+	function wp_safe_redirect( string $location, int $status = 302 ): bool {
+		throw new RuntimeException( 'wp_safe_redirect: ' . $location );
 	}
 }
 

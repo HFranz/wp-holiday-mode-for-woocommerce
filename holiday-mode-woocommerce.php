@@ -210,6 +210,19 @@ function hmfw_migrate_customizer_settings(): void {
 	update_option( 'hmfw_version', HMFW_VERSION );
 }
 
+register_activation_hook( __FILE__, 'hmfw_maybe_set_first_activation_time' );
+/**
+ * Record the first time this plugin was activated. Used by
+ * hmfw_maybe_review_notice() below to only ask merchants for a review once
+ * they have had a reasonable amount of time to actually use the plugin,
+ * rather than nagging them right after install.
+ */
+function hmfw_maybe_set_first_activation_time(): void {
+	if ( false === get_option( 'hmfw_first_activated_at', false ) ) {
+		update_option( 'hmfw_first_activated_at', time() );
+	}
+}
+
 /**
  * Check whether Holiday Mode is currently active, i.e. WooCommerce is
  * available, the merchant enabled it, and today falls within the configured
@@ -434,6 +447,77 @@ function hmfw_holiday_mode_active_notice(): void {
 			)
 		)
 	); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+}
+
+/**
+ * Number of seconds after first activation before hmfw_maybe_review_notice()
+ * starts asking for a review, so only merchants who have had a real chance
+ * to use the plugin see it, not everyone who just installed it.
+ */
+define( 'HMFW_REVIEW_NOTICE_DELAY', 14 * DAY_IN_SECONDS );
+
+add_action( 'admin_notices', 'hmfw_maybe_review_notice' );
+/**
+ * Ask merchants who have used the plugin for a while to leave a review.
+ * Deliberately independent of Holiday Mode actually being active right
+ * now (unlike hmfw_holiday_mode_active_notice() above) - this is about
+ * overall plugin usage, not the current holiday period - and only ever
+ * shows once, until dismissed via hmfw_maybe_dismiss_review_notice().
+ */
+function hmfw_maybe_review_notice(): void {
+	if ( hmfw_is_woocommerce_not_available() || ! current_user_can( 'manage_woocommerce' ) ) {
+		return;
+	}
+
+	if ( 'yes' === get_option( 'hmfw_review_notice_dismissed', 'no' ) ) {
+		return;
+	}
+
+	$first_activated_at = (int) get_option( 'hmfw_first_activated_at', 0 );
+
+	if ( ! $first_activated_at || ( time() - $first_activated_at ) < HMFW_REVIEW_NOTICE_DELAY ) {
+		return;
+	}
+
+	$dismiss_url = add_query_arg(
+		array(
+			'hmfw-dismiss-review-notice' => '1',
+			'_wpnonce'                   => wp_create_nonce( 'hmfw_dismiss_review_notice' ),
+		)
+	);
+
+	printf(
+		'<div class="notice notice-info"><p>%s</p><p><a href="%s" class="button button-primary" target="_blank" rel="noopener noreferrer">%s</a> <a href="%s">%s</a></p></div>',
+		esc_html__( 'Enjoying Holiday Mode for WooCommerce? A quick review helps other merchants find it.', 'holiday-mode-for-woocommerce' ),
+		esc_url( 'https://wordpress.org/support/plugin/holiday-mode-for-woocommerce/reviews/#new-post' ),
+		esc_html__( 'Leave a review', 'holiday-mode-for-woocommerce' ),
+		esc_url( $dismiss_url ),
+		esc_html__( 'Dismiss', 'holiday-mode-for-woocommerce' )
+	);
+}
+
+add_action( 'admin_init', 'hmfw_maybe_dismiss_review_notice' );
+/**
+ * Handle the "Dismiss" link on the review-request notice above. Runs on
+ * admin_init, before any output, so the option is updated and the redirect
+ * can still happen before hmfw_maybe_review_notice() would otherwise render
+ * the notice again on the same request.
+ */
+function hmfw_maybe_dismiss_review_notice(): void {
+	if ( ! isset( $_GET['hmfw-dismiss-review-notice'], $_GET['_wpnonce'] ) ) {
+		return;
+	}
+
+	$nonce = sanitize_key( wp_unslash( $_GET['_wpnonce'] ) );
+
+	if ( ! current_user_can( 'manage_woocommerce' ) || ! wp_verify_nonce( $nonce, 'hmfw_dismiss_review_notice' ) ) {
+		return;
+	}
+
+	update_option( 'hmfw_review_notice_dismissed', 'yes' );
+
+	wp_safe_redirect( remove_query_arg( array( 'hmfw-dismiss-review-notice', '_wpnonce' ) ) );
+	exit;
 }
 
 add_action( 'woocommerce_settings_saved', 'hmfw_maybe_flush_cache_on_settings_save' );
