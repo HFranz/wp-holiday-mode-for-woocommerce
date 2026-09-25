@@ -61,6 +61,24 @@ class HookRegistrationTest extends TestCase {
 	}
 
 	/**
+	 * Regression test: hmfw_maybe_set_first_activation_time() must also be
+	 * hooked into 'init', not just register_activation_hook() - the latter
+	 * does not fire when an already-active plugin is merely updated, so
+	 * without the 'init' fallback, every pre-existing installation updating
+	 * to a version that introduced hmfw_first_activated_at would never get
+	 * it set, and would therefore never see the review notice at all.
+	 */
+	public function testFirstActivationTimeHasInitFallbackForExistingInstalls(): void {
+		global $wp_filter;
+
+		$this->assertArrayHasKey( 'init', $wp_filter, 'Nothing is hooked into init at all.' );
+
+		$priority = $this->findPriority( $wp_filter['init'], 'hmfw_maybe_set_first_activation_time' );
+
+		$this->assertNotNull( $priority, 'hmfw_maybe_set_first_activation_time is not hooked into init.' );
+	}
+
+	/**
 	 * Find the registered priority of a callback for a given hook.
 	 *
 	 * @param array<int, array{function: mixed, priority: int}> $callbacks Registered callbacks for a hook.

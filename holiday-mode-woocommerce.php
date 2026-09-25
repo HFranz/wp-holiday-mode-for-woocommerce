@@ -211,6 +211,14 @@ function hmfw_migrate_customizer_settings(): void {
 }
 
 register_activation_hook( __FILE__, 'hmfw_maybe_set_first_activation_time' );
+// Also hooked into 'init' as a fallback, for the same reason
+// hmfw_migrate_customizer_settings() above needs one: register_activation_hook()
+// does not fire when an already-active plugin is merely updated (WordPress
+// keeps it active throughout, it only swaps files in place), so without this,
+// every pre-existing installation updating to the version that introduced
+// hmfw_first_activated_at would never get it set, and would therefore never
+// see the review notice at all.
+add_action( 'init', 'hmfw_maybe_set_first_activation_time' );
 /**
  * Record the first time this plugin was activated. Used by
  * hmfw_maybe_review_notice() below to only ask merchants for a review once
