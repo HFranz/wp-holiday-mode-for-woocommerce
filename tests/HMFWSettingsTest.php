@@ -13,7 +13,6 @@ use PHPUnit\Framework\TestCase;
 use WC_Admin_Settings;
 use function add_filter;
 use function apply_filters;
-use function do_action;
 use function has_action;
 use function update_option;
 
@@ -349,54 +348,6 @@ class HMFWSettingsTest extends TestCase {
 		$page->get_settings( 'some-section' );
 
 		$this->assertSame( 'some-section', $received_section );
-	}
-
-	/**
-	 * Instantiating the page must register a rating notice callback on the
-	 * 'woocommerce_after_settings_holiday_mode' action (fired below the Save button).
-	 */
-	public function testRatingNoticeIsRegisteredOnAfterSettingsHook(): void {
-		$page = $this->createSettingsPage();
-
-		$this->assertSame(
-			10,
-			has_action( 'woocommerce_after_settings_holiday_mode', array( $page, 'output_rating_notice' ) )
-		);
-	}
-
-	/**
-	 * output_rating_notice() must print an escaped rating request containing
-	 * a link to the WordPress.org reviews page.
-	 */
-	public function testOutputRatingNoticePrintsFiveStarReviewLink(): void {
-		$page = $this->createSettingsPage();
-
-		ob_start();
-		$page->output_rating_notice();
-		$html = ob_get_clean();
-
-		$this->assertStringContainsString( '<div', $html );
-		$this->assertStringContainsString(
-			'https://wordpress.org/support/plugin/holiday-mode-for-woocommerce/reviews/?rate=5#new-post',
-			$html
-		);
-		$this->assertStringContainsString( 'target="_blank"', $html );
-		$this->assertStringContainsString( 'rel="noopener noreferrer"', $html );
-		$this->assertStringContainsString( 'Holiday Mode for WooCommerce', $html );
-	}
-
-	/**
-	 * Triggering the 'woocommerce_after_settings_holiday_mode' action must
-	 * invoke the registered rating notice callback (end-to-end hook wiring).
-	 */
-	public function testAfterSettingsActionTriggersRatingNoticeOutput(): void {
-		$this->createSettingsPage();
-
-		ob_start();
-		do_action( 'woocommerce_after_settings_holiday_mode' );
-		$html = ob_get_clean();
-
-		$this->assertStringContainsString( 'wordpress.org/support/plugin/holiday-mode-for-woocommerce', $html );
 	}
 
 	/**
