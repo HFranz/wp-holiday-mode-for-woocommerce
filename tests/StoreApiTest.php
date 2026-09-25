@@ -11,6 +11,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversFunction;
 use PHPUnit\Framework\TestCase;
 use function hmfw_is_holiday_mode_active;
+use function hmfw_is_upcoming_notice_active;
 use function update_option;
 
 #[CoversFunction( 'hmfw_is_holiday_mode_active' )]
@@ -79,9 +80,38 @@ class StoreApiTest extends TestCase {
 		$schema = \HMFW_Store_Api::get_schema();
 
 		$this->assertSame(
-			array( 'active', 'purchasing_disabled', 'message', 'notice_type' ),
+			array( 'active', 'purchasing_disabled', 'message', 'notice_type', 'upcoming_closure', 'upcoming_message' ),
 			array_keys( $schema )
 		);
+	}
+
+	public function testUpcomingClosureExposesMessageBeforeHolidayModeStarts(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '+2 days' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+9 days' ) ) );
+		update_option( 'hmfw_upcoming_notice_days', 5 );
+		update_option( 'hmfw_upcoming_notice_message', 'Closing soon!' );
+
+		$this->assertTrue( hmfw_is_upcoming_notice_active() );
+
+		$data = \HMFW_Store_Api::get_data();
+
+		$this->assertFalse( $data['active'] );
+		$this->assertTrue( $data['upcoming_closure'] );
+		$this->assertSame( 'Closing soon!', $data['upcoming_message'] );
+	}
+
+	public function testUpcomingClosureIsFalseOnceHolidayModeIsActive(): void {
+		update_option( 'hmfw_holiday_status', 'yes' );
+		update_option( 'hmfw_holiday_startdate', gmdate( 'Y-m-d', strtotime( '-1 day' ) ) );
+		update_option( 'hmfw_holiday_enddate', gmdate( 'Y-m-d', strtotime( '+1 day' ) ) );
+		update_option( 'hmfw_upcoming_notice_days', 30 );
+
+		$data = \HMFW_Store_Api::get_data();
+
+		$this->assertTrue( $data['active'] );
+		$this->assertFalse( $data['upcoming_closure'] );
+		$this->assertSame( '', $data['upcoming_message'] );
 	}
 
 	public function testInitIsANoOpWithoutStoreApiAvailable(): void {

@@ -56,16 +56,19 @@ if ( ! class_exists( 'HMFW_Store_Api' ) ) :
 		 * Build the Holiday Mode data exposed under `extensions.holiday-mode-woocommerce`
 		 * in the Cart and Checkout Store API responses.
 		 *
-		 * @return array{active: bool, purchasing_disabled: bool, message: string, notice_type: string}
+		 * @return array{active: bool, purchasing_disabled: bool, message: string, notice_type: string, upcoming_closure: bool, upcoming_message: string}
 		 */
 		public static function get_data(): array {
-			$active = hmfw_is_holiday_mode_active();
+			$active   = hmfw_is_holiday_mode_active();
+			$upcoming = ! $active && hmfw_is_upcoming_notice_active();
 
 			return array(
 				'active'              => $active,
 				'purchasing_disabled' => $active && 'yes' === get_option( 'hmfw_disable_purchasing', 'yes' ),
 				'message'             => $active ? wp_kses_post( get_option( 'hmfw_holiday_message', '' ) ) : '',
 				'notice_type'         => get_option( 'hmfw_holiday_notice_type', 'error' ),
+				'upcoming_closure'    => $upcoming,
+				'upcoming_message'    => $upcoming ? wp_kses_post( hmfw_build_upcoming_notice_message() ) : '',
 			);
 		}
 
@@ -96,6 +99,18 @@ if ( ! class_exists( 'HMFW_Store_Api' ) ) :
 				),
 				'notice_type'         => array(
 					'description' => __( 'Visual style of the holiday notice: "error" (red) or "notice" (blue).', 'holiday-mode-for-woocommerce' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'upcoming_closure'    => array(
+					'description' => __( 'Whether the shop is scheduled to close soon (Holiday Mode is not active yet, but within its configured advance-notice window).', 'holiday-mode-for-woocommerce' ),
+					'type'        => 'boolean',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+				'upcoming_message'    => array(
+					'description' => __( 'The advance-notice message to display to shoppers. Empty unless upcoming_closure is true.', 'holiday-mode-for-woocommerce' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 					'readonly'    => true,
