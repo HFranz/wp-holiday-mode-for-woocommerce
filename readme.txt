@@ -85,6 +85,7 @@ This plugin does not collect, process, or store any personal data.
 2. The absence message on the shop page - purchasing is disabled for every product while Holiday Mode is active.
 3. The same absence message shown in the "info" notice style, in German - notice color and translations adapt automatically.
 4. The Holiday Mode settings page under WooCommerce -> Settings, where you configure the date range, notice color/icon, and vacation message.
+5. The wp-admin Dashboard, showing the "Holiday Mode is currently active" reminder alongside the review-request notice shown to merchants who have used the plugin for a while.
 
 == Changelog ==
 
